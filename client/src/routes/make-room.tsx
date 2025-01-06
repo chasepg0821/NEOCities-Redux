@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useAppSelector } from '../lib/util/store/hooks'
 
 export const Route = createFileRoute('/make-room')({
@@ -7,6 +7,7 @@ export const Route = createFileRoute('/make-room')({
 
 function RouteComponent() {
   const user = useAppSelector((store) => store.auth);
+  const navigate = useNavigate({ from: '/make-room'});
 
   const handleMakeRoom = () => {
     //TODO: Handle REST POST call to make the room. Redirect to room/$roomID after successful REST response.
@@ -26,7 +27,7 @@ function RouteComponent() {
       return res.json();
     })
     .then((data) => {
-      console.log(data);
+      navigate({ to: `/room/${data.roomID}`});
     })
     .catch((e) => {
       console.log(e);

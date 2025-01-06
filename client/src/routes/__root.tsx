@@ -4,6 +4,7 @@ import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 
 import "../styles/globals.scss"
 import { StoreProvider } from '../lib/util/store/StoreProvider'
+import { SocketProvider } from '../lib/util/socket/SocketProvider'
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -13,7 +14,9 @@ function RootComponent() {
   return (
     <>
       <StoreProvider>
-        <Outlet />
+        <SocketProvider>
+          <Outlet />
+        </SocketProvider>
       </StoreProvider>
       <TanStackRouterDevtools position="bottom-left" />
     </>

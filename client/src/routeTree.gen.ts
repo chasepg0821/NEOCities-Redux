@@ -16,6 +16,9 @@ import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
 import { Route as RoomIndexImport } from './routes/room/index'
 import { Route as RoomRoomIDImport } from './routes/room/$roomID'
+import { Route as RoomRoomIDIndexImport } from './routes/room/$roomID/index'
+import { Route as RoomRoomIDStageImport } from './routes/room/$roomID/stage'
+import { Route as RoomRoomIDPlayImport } from './routes/room/$roomID/play'
 
 // Create/Update Routes
 
@@ -47,6 +50,24 @@ const RoomRoomIDRoute = RoomRoomIDImport.update({
   id: '/room/$roomID',
   path: '/room/$roomID',
   getParentRoute: () => rootRoute,
+} as any)
+
+const RoomRoomIDIndexRoute = RoomRoomIDIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => RoomRoomIDRoute,
+} as any)
+
+const RoomRoomIDStageRoute = RoomRoomIDStageImport.update({
+  id: '/stage',
+  path: '/stage',
+  getParentRoute: () => RoomRoomIDRoute,
+} as any)
+
+const RoomRoomIDPlayRoute = RoomRoomIDPlayImport.update({
+  id: '/play',
+  path: '/play',
+  getParentRoute: () => RoomRoomIDRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -88,25 +109,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RoomIndexImport
       parentRoute: typeof rootRoute
     }
+    '/room/$roomID/play': {
+      id: '/room/$roomID/play'
+      path: '/play'
+      fullPath: '/room/$roomID/play'
+      preLoaderRoute: typeof RoomRoomIDPlayImport
+      parentRoute: typeof RoomRoomIDImport
+    }
+    '/room/$roomID/stage': {
+      id: '/room/$roomID/stage'
+      path: '/stage'
+      fullPath: '/room/$roomID/stage'
+      preLoaderRoute: typeof RoomRoomIDStageImport
+      parentRoute: typeof RoomRoomIDImport
+    }
+    '/room/$roomID/': {
+      id: '/room/$roomID/'
+      path: '/'
+      fullPath: '/room/$roomID/'
+      preLoaderRoute: typeof RoomRoomIDIndexImport
+      parentRoute: typeof RoomRoomIDImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface RoomRoomIDRouteChildren {
+  RoomRoomIDPlayRoute: typeof RoomRoomIDPlayRoute
+  RoomRoomIDStageRoute: typeof RoomRoomIDStageRoute
+  RoomRoomIDIndexRoute: typeof RoomRoomIDIndexRoute
+}
+
+const RoomRoomIDRouteChildren: RoomRoomIDRouteChildren = {
+  RoomRoomIDPlayRoute: RoomRoomIDPlayRoute,
+  RoomRoomIDStageRoute: RoomRoomIDStageRoute,
+  RoomRoomIDIndexRoute: RoomRoomIDIndexRoute,
+}
+
+const RoomRoomIDRouteWithChildren = RoomRoomIDRoute._addFileChildren(
+  RoomRoomIDRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/make-room': typeof MakeRoomRoute
-  '/room/$roomID': typeof RoomRoomIDRoute
+  '/room/$roomID': typeof RoomRoomIDRouteWithChildren
   '/room': typeof RoomIndexRoute
+  '/room/$roomID/play': typeof RoomRoomIDPlayRoute
+  '/room/$roomID/stage': typeof RoomRoomIDStageRoute
+  '/room/$roomID/': typeof RoomRoomIDIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/make-room': typeof MakeRoomRoute
-  '/room/$roomID': typeof RoomRoomIDRoute
   '/room': typeof RoomIndexRoute
+  '/room/$roomID/play': typeof RoomRoomIDPlayRoute
+  '/room/$roomID/stage': typeof RoomRoomIDStageRoute
+  '/room/$roomID': typeof RoomRoomIDIndexRoute
 }
 
 export interface FileRoutesById {
@@ -114,16 +177,43 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/make-room': typeof MakeRoomRoute
-  '/room/$roomID': typeof RoomRoomIDRoute
+  '/room/$roomID': typeof RoomRoomIDRouteWithChildren
   '/room/': typeof RoomIndexRoute
+  '/room/$roomID/play': typeof RoomRoomIDPlayRoute
+  '/room/$roomID/stage': typeof RoomRoomIDStageRoute
+  '/room/$roomID/': typeof RoomRoomIDIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/make-room' | '/room/$roomID' | '/room'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/make-room'
+    | '/room/$roomID'
+    | '/room'
+    | '/room/$roomID/play'
+    | '/room/$roomID/stage'
+    | '/room/$roomID/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/make-room' | '/room/$roomID' | '/room'
-  id: '__root__' | '/' | '/about' | '/make-room' | '/room/$roomID' | '/room/'
+  to:
+    | '/'
+    | '/about'
+    | '/make-room'
+    | '/room'
+    | '/room/$roomID/play'
+    | '/room/$roomID/stage'
+    | '/room/$roomID'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/make-room'
+    | '/room/$roomID'
+    | '/room/'
+    | '/room/$roomID/play'
+    | '/room/$roomID/stage'
+    | '/room/$roomID/'
   fileRoutesById: FileRoutesById
 }
 
@@ -131,7 +221,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   MakeRoomRoute: typeof MakeRoomRoute
-  RoomRoomIDRoute: typeof RoomRoomIDRoute
+  RoomRoomIDRoute: typeof RoomRoomIDRouteWithChildren
   RoomIndexRoute: typeof RoomIndexRoute
 }
 
@@ -139,7 +229,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   MakeRoomRoute: MakeRoomRoute,
-  RoomRoomIDRoute: RoomRoomIDRoute,
+  RoomRoomIDRoute: RoomRoomIDRouteWithChildren,
   RoomIndexRoute: RoomIndexRoute,
 }
 
@@ -170,10 +260,27 @@ export const routeTree = rootRoute
       "filePath": "make-room.tsx"
     },
     "/room/$roomID": {
-      "filePath": "room/$roomID.tsx"
+      "filePath": "room/$roomID.tsx",
+      "children": [
+        "/room/$roomID/play",
+        "/room/$roomID/stage",
+        "/room/$roomID/"
+      ]
     },
     "/room/": {
       "filePath": "room/index.tsx"
+    },
+    "/room/$roomID/play": {
+      "filePath": "room/$roomID/play.tsx",
+      "parent": "/room/$roomID"
+    },
+    "/room/$roomID/stage": {
+      "filePath": "room/$roomID/stage.tsx",
+      "parent": "/room/$roomID"
+    },
+    "/room/$roomID/": {
+      "filePath": "room/$roomID/index.tsx",
+      "parent": "/room/$roomID"
     }
   }
 }

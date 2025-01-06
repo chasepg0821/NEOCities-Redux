@@ -6,6 +6,11 @@ const nanoid = customAlphabet(alphabet, 5);
 
 const router = Router();
 
+router.get('/', (req: Request, res: Response) => {
+    const rooms: any[] = [];
+    res.status(200).send({rooms});
+})
+
 router.post('/make-room', (req: Request, res: Response) => {
     let roomID = nanoid();
     console.log(`Made room: ${roomID} with admin ${req.body.user.name}.`);

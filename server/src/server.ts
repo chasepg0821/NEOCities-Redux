@@ -3,7 +3,7 @@ import http from "http"
 import path from "path"
 import cors from "cors"
 
-import { initSocket } from "./socket"
+import { initSocket } from "./lib/socket/socket"
 import router from "./routes"
 
 
