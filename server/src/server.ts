@@ -1,23 +1,26 @@
 import express from "express"
 import http from "http"
 import path from "path"
+import cors from "cors"
+
 import { initSocket } from "./socket"
+import router from "./routes"
 
 
 const app = express();
 const server = http.createServer(app);
 
-// Middleware
-app.use(express.json());
 
-// Serve static files from the Vite build directory
+app.use(express.json());
 app.use(express.static(path.join(__dirname, '../../client/dist')));
+app.use(cors({
+  origin: 'http://localhost:3001', // Adjust the port if your client runs on a different port
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // REST endpoint example
-app.post('/join', (req, res) => {
-  const { userId, roomId } = req.body;
-  res.status(200).send({ message: 'Joined room' });
-});
+app.use('/api', router);
 
 // Serve the index.html file for any other requests
 app.get('*', (req, res) => {
