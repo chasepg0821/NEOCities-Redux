@@ -2,14 +2,23 @@ import { createContext, PropsWithChildren, useEffect, useRef, useState } from "r
 import { SocketContextType } from "./SocketContextType";
 import { io, Socket } from "socket.io-client";
 import { useAppSelector } from "../store/hooks";
+import { ClientSocketType, EmitEvents, ListenEvents } from "./SocketType";
 
 export const SocketContext = createContext<SocketContextType | undefined>(undefined);
 
 export const SocketProvider = ({ children } : PropsWithChildren) => {
-    const socket = useRef<Socket>();
+    const socket = useRef<ClientSocketType>();
     const user = useAppSelector((state) => state.auth);
 
-    const sendEvent = (event: string, ...args: any[]) => {
+    const addListener = (event: keyof ListenEvents, cb: (...args: any[]) => void) => {
+        socket.current?.on(event, cb);
+    }
+
+    const removeListener = (event: keyof ListenEvents) => {
+        socket.current?.off(event);
+    }
+
+    const sendEvent = (event: keyof EmitEvents, ...args: Parameters<EmitEvents[keyof EmitEvents]>) => {
         socket.current?.emit(event, ...args);
     }
 
@@ -19,9 +28,7 @@ export const SocketProvider = ({ children } : PropsWithChildren) => {
     }
 
     const connectSocket = () => {
-        if (socket.current) {
-            disconnectSocket();
-        };
+        if (socket.current) disconnectSocket();
 
         const newSocket = io("http://localhost:3000", {
             auth: {
@@ -30,30 +37,49 @@ export const SocketProvider = ({ children } : PropsWithChildren) => {
             }
         })
 
-        newSocket.on('connect', () => {
-            console.log('Connected to server');
+        newSocket.on("connect", () => {
+            if (socket.current?.recovered) {
+                console.log("Socket connection recovered.");
+            } else {
+                console.log("Established new socket connection.")
+            }
+        });
+
+        newSocket.on("connect_error", (err) => {
+            if (newSocket.active) {
+                console.log("Temporary connection failure. Reconnecting...");
+            } else {
+                console.log("Error connecting to server: ", err)
+            }
+        });
+
+        newSocket.on("disconnect", () => {
+            if (newSocket.active) {
+                console.log("Temporary connection failure. Reconnecting...");
+            } else {
+                console.log("Closed socket connection.")
+            }
         });
       
-        // Respond to ping with pong and include the timestamp
-        newSocket.on('ping', (timestamp) => {
-            console.log('Received ping from server');
-            newSocket.emit('pong', timestamp);
+        newSocket.on("ping", (timestamp) => {
+            newSocket.emit("pong", timestamp);
         });
 
         socket.current = newSocket;
     }
 
     useEffect(() => {
-        connectSocket();
+        if (!socket.current) connectSocket();
         return () => disconnectSocket();
     }, [])
 
     return (
         <SocketContext.Provider value={{
+            addListener,
+            removeListener,
             sendEvent,
             connectSocket,
-            disconnectSocket,
-            connectionStatus: socket.current?.connected || false
+            disconnectSocket
         }}>
             { children }
         </SocketContext.Provider>

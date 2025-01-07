@@ -11,8 +11,16 @@ function RouteComponent() {
     const socket = useContext(SocketContext);
 
     useEffect(() => {
-        socket?.sendEvent("joinRoom", roomID);
-        return () => socket?.sendEvent("leaveRoom");
+      socket?.addListener("joinedRoom", (success, reason?) => {
+        console.log("joined room", success, reason);
+      });
+
+      socket?.sendEvent("joinRoom", roomID);
+
+      return () => {
+        socket?.removeListener("joinedRoom");
+        socket?.sendEvent("leaveRoom");
+      }
     }, [])
 
     return <Outlet />
