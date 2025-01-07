@@ -2,7 +2,7 @@ import { clientDataType } from "./clientTypes";
 
 let clients: ClientManager | undefined = undefined;
 
-export default class ClientManager {
+export class ClientManager {
     private clientData: Map<string, clientDataType>;
 
     constructor() {

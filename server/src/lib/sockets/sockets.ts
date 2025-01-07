@@ -37,8 +37,8 @@ export function initSocketServer(server: http.Server<typeof http.IncomingMessage
       pong(socket, timestamp);
     });
 
-    socket.on("joinRoom", (room: string) => {
-      joinRoom(io, socket, room);
+    socket.on("joinRoom", (room: string, password?: string) => {
+      joinRoom(io, socket, room, password);
     });
 
     socket.on("leaveRoom", () => {

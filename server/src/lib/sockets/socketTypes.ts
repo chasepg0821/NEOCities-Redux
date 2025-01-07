@@ -2,11 +2,11 @@ import { Server, Socket } from "socket.io";
 
 export interface ServerToClientEvents {
     ping: (timestamp: number) => void;
-    joinedRoom: (success: boolean, reason?: string) => void; 
+    joinResponse: (success: boolean, reason?: string) => void; 
 }
 
 export interface ClientToServerEvents {
-    joinRoom: (room: string) => void;
+    joinRoom: (room: string, password?: string) => void;
     leaveRoom: () => void;
     pong: (timestamp: number) => void;
 }
