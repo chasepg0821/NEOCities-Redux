@@ -12,19 +12,5 @@ function RouteComponent() {
     const uid = useAppSelector((state) => state.auth.id);
     const socket = useContext(SocketContext);
 
-    useEffect(() => {
-      socket?.addListener("joinResponse", (success, reason?) => {
-        console.log("joined room", success, reason);
-        fetch(`http://localhost:3000/api/room/${roomID}?uid=${uid}`).then((res) => res.json()).then((data) => console.log(data)).catch((e) => console.log(e));
-      });
-
-      socket?.sendEvent("joinRoom", roomID);
-
-      return () => {
-        socket?.removeListener("joinResponse");
-        socket?.sendEvent("leaveRoom");
-      }
-    }, [])
-
     return <Outlet />
 }

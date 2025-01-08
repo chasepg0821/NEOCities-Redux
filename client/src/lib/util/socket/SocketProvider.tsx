@@ -1,14 +1,17 @@
-import { createContext, PropsWithChildren, useEffect, useRef, useState } from "react";
+import { createContext, PropsWithChildren, useEffect, useRef } from "react";
 import { SocketContextType } from "./SocketContextType";
 import { io, Socket } from "socket.io-client";
 import { useAppSelector } from "../store/hooks";
 import { ClientSocketType, EmitEvents, ListenEvents } from "./SocketType";
+import { addRoomHandlers, addUtilHandlers, removeRoomHandlers, removeUtilHandlers } from "./socketHandlers";
+import { useNavigate } from "@tanstack/react-router";
 
 export const SocketContext = createContext<SocketContextType | undefined>(undefined);
 
 export const SocketProvider = ({ children } : PropsWithChildren) => {
     const socket = useRef<ClientSocketType>();
     const user = useAppSelector((state) => state.auth);
+    const nav = useNavigate();
 
     const addListener = (event: keyof ListenEvents, cb: (...args: any[]) => void) => {
         socket.current?.on(event, cb);
@@ -23,7 +26,11 @@ export const SocketProvider = ({ children } : PropsWithChildren) => {
     }
 
     const disconnectSocket = () => {
-        socket.current?.disconnect();
+        if (socket.current) {
+            removeUtilHandlers(socket.current);
+            removeRoomHandlers(socket.current);
+            socket.current?.disconnect();
+        }
         socket.current = undefined;
     }
 
@@ -61,9 +68,8 @@ export const SocketProvider = ({ children } : PropsWithChildren) => {
             }
         });
       
-        newSocket.on("ping", (timestamp) => {
-            newSocket.emit("pong", timestamp);
-        });
+        addUtilHandlers(newSocket, nav);
+        addRoomHandlers(newSocket, nav);
 
         socket.current = newSocket;
     }

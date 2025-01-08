@@ -7,13 +7,21 @@ export const Route = createFileRoute('/')({
 })
 
 function HomeComponent() {
-  const socket = React.useContext(SocketContext)
-  const navigate = useNavigate();
+  const socket = React.useContext(SocketContext);
+  const nav = useNavigate();
+  const [room, setRoom] = React.useState('');
+  
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setRoom(e.target.value);
+  }
 
   return (
     <div className="p-2">
       <h3>Welcome Home!</h3>
-      <button onClick={() => navigate({ to: "/room/oild"})}>Home</button>
+      <input value={room} onChange={handleChange}/>
+      <button onClick={() => socket?.sendEvent("joinRoom", room)}>Join Room</button>
+      <button onClick={() => nav({ to: "/make-room" })}>Make Room</button>
     </div>
   )
 }

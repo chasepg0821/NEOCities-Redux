@@ -10,6 +10,6 @@ export const joinRoom = (io: AppServerType, socket: AppSocketType, room: string,
     }
 
     socket.join(room);
-    socket.emit("joinResponse", true);
+    socket.emit("joinResponse", true, room);
     clients.setRoom(socket.data.uid, room);
 }

@@ -2,7 +2,7 @@ import { Socket } from "socket.io-client";
 
 export interface ListenEvents {
     ping: (timestamp: number) => void;
-    joinResponse: (success: boolean, reason?: string) => void; 
+    joinResponse: (success: boolean, room: string, reason?: string) => void; 
 }
 
 export interface EmitEvents {
