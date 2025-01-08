@@ -1,9 +1,12 @@
 import { Server, Socket } from "socket.io";
+import { RoomLobbyData, UserID, UserType } from "../rooms";
 
 export interface ServerToClientEvents {
     ping: (timestamp: number) => void;
     latencies: (latencies: { [id: string]: { latency: number } }) => void;
-    joinResponse: (success: boolean, room: string, reason?: string) => void; 
+    joinResponse: (success: boolean, info?: string | RoomLobbyData) => void;
+    userJoined: (user: UserType) => void;
+    userLeft: (id: UserID) => void;
 }
 
 export interface ClientToServerEvents {

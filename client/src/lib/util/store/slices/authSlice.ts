@@ -1,7 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
-import sessionStorage from 'redux-persist/lib/storage/session';
-import { persistReducer } from 'redux-persist';
 
 import type { RootState } from '../store';
 import { generateUserName } from '../../usernameGenerator/usernameGenerator';

@@ -37,7 +37,7 @@ RoomRouter.post('/make-room', (req: Request, res: Response) => {
     }
     
     console.log(`Made room: ${roomID} with admin ${req.query.uid}.`);
-    res.status(201).send({ room: rooms.get(roomID)?.getRoomData() })
+    res.status(201).send({ room: rooms.get(roomID)!.getLobbyData() })
 });
 
 RoomRouter.get('/:room', (req: Request, res: Response) => {

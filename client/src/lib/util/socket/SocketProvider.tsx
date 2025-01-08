@@ -1,7 +1,7 @@
 import { createContext, PropsWithChildren, useEffect, useRef } from "react";
 import { SocketContextType } from "./SocketContextType";
 import { io, Socket } from "socket.io-client";
-import { useAppSelector } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { ClientSocketType, EmitEvents, ListenEvents } from "./SocketType";
 import { addRoomHandlers, addUtilHandlers, removeRoomHandlers, removeUtilHandlers } from "./socketHandlers";
 import { useNavigate } from "@tanstack/react-router";
@@ -12,6 +12,7 @@ export const SocketProvider = ({ children } : PropsWithChildren) => {
     const socket = useRef<ClientSocketType>();
     const user = useAppSelector((state) => state.auth);
     const nav = useNavigate();
+    const dispatch = useAppDispatch();
 
     const addListener = (event: keyof ListenEvents, cb: (...args: any[]) => void) => {
         socket.current?.on(event, cb);
@@ -69,7 +70,7 @@ export const SocketProvider = ({ children } : PropsWithChildren) => {
         });
       
         addUtilHandlers(newSocket, nav);
-        addRoomHandlers(newSocket, nav);
+        addRoomHandlers(newSocket, nav, dispatch);
 
         socket.current = newSocket;
     }

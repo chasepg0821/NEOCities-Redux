@@ -49,6 +49,17 @@ export interface RoomSetupType {
     }
 }
 
+export interface RoomLobbyData {
+    id: string
+    admin: string;
+    users: {
+        [id: string]: UserType;
+    }
+    roleAssignments: {
+        [id: RoleID]: UserID;
+    }
+}
+
 export interface RoomDataType {
     id: string
     admin: string;

@@ -1,5 +1,5 @@
 import { GameInstance } from "./gameInstance";
-import { RoomDataType, RoomSetupType, TaskID, TaskType } from "./roomTypes";
+import { RoomDataType, RoomLobbyData, RoomSetupType, TaskID, TaskType, UserID, UserType } from "./roomTypes";
 
 export class RoomInstance {
     private roomData: RoomDataType;
@@ -9,12 +9,33 @@ export class RoomInstance {
         this.roomData = roomData
     }
 
-    public setSetup(roomSetup: RoomSetupType): void {
-        this.roomData.roomSetup = roomSetup;
+    public addUser(id: UserID, user: UserType): void {
+        this.roomData.users[id] = user;
     }
 
-    public getRoomData(): RoomDataType {
-        return this.roomData;
+    public removeUser(id: UserID): void {
+        delete this.roomData.users[id]
+    }
+
+    public getUsers(): {[id: UserID]: UserType } {
+        return this.roomData.users;
+    }
+
+    public getAdmin(): string {
+        return this.roomData.admin;
+    }
+
+    public getLobbyData(): RoomLobbyData {
+        return {
+            id: this.roomData.id,
+            admin: this.getAdmin(),
+            users: this.getUsers(),
+            roleAssignments: this.roomData.roomSetup.roleAssignments
+        }
+    }
+
+    public setSetup(roomSetup: RoomSetupType): void {
+        this.roomData.roomSetup = roomSetup;
     }
 
     public stageGame(): void {

@@ -1,5 +1,5 @@
 import { GameDataType, RoomSetupType, TaskID } from "./roomTypes";
-import { forEach, sortBy } from "lodash"
+import { cloneDeep, forEach, sortBy } from "lodash"
 
 interface StagedTask {
     id: TaskID;
@@ -24,7 +24,7 @@ export class GameInstance {
         const gD: GameDataType = {
             players: {},
             messages: [],
-            roles: {...roomSetup.roles},
+            roles: cloneDeep(roomSetup.roles),
             entities: {},
             tasks: {}
         }

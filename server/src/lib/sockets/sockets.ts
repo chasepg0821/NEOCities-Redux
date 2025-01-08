@@ -59,7 +59,7 @@ export function initSocketServer(server: http.Server<typeof http.IncomingMessage
     // emit a ping to users only in a room, and notify that room of the new pings
     rooms.getMap().forEach((room, roomID) => {
       const latencies: { [id: string]: { latency: number }} = {}
-      forEach(room.getRoomData().users, (_, uid) => {
+      forEach(room.getUsers(), (_, uid) => {
         latencies[uid] = {
           latency: clients.getLatency(uid) || -1
         }

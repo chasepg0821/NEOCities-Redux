@@ -12,6 +12,7 @@ import {
   } from 'redux-persist';
 
 import AuthReducer from './slices/authSlice';
+import RoomReducer from './slices/roomSlice';
 
 const persistConfig = {
 	key: 'root',
@@ -21,6 +22,7 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
     auth: AuthReducer,
+	room: RoomReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
