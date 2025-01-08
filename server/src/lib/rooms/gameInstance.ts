@@ -35,7 +35,7 @@ export class GameInstance {
                 role: parseInt(role),
                 ready: false
             }
-        });
+    });
 
         // generate entities
         forEach(roomSetup.roles, (role, roleID) => {

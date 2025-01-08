@@ -9,8 +9,12 @@ export class RoomInstance {
         this.roomData = roomData
     }
 
-    public updateSetup(roomSetup: RoomSetupType): void {
+    public setSetup(roomSetup: RoomSetupType): void {
         this.roomData.roomSetup = roomSetup;
+    }
+
+    public getRoomData(): RoomDataType {
+        return this.roomData;
     }
 
     public stageGame(): void {
@@ -26,10 +30,6 @@ export class RoomInstance {
                 console.log("Game ended.");
             }
         )
-    }
-
-    public getTasks(): { [id: TaskID]: TaskType } {
-        return this.roomData.roomSetup.tasks;
     }
 
     public getGame(): GameInstance | undefined {

@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import { customAlphabet } from "nanoid";
 import { getClients } from "../clients";
+import { getRooms } from "../rooms";
 
 const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const nanoid = customAlphabet(alphabet, 5);
@@ -13,17 +14,38 @@ RoomRouter.get('/', (req: Request, res: Response) => {
 });
 
 RoomRouter.post('/make-room', (req: Request, res: Response) => {
+    const rooms = getRooms();
+    const clients = getClients();
+
     let roomID = nanoid();
-    console.log(`Made room: ${roomID} with admin ${req.body.user.name}.`);
-    res.status(201).send({roomID})
+    while (rooms.has(roomID)) roomID = nanoid();
+
+    if (typeof req.query.uid !== 'string' || !clients.has(req.query.uid)) {
+        res.status(400).send("Bad Request: user could not be found by the provided uid")
+    } else {
+        rooms.add({
+            id: roomID,
+            admin: req.query.uid,
+            users: {
+                [req.query.uid]: {
+                    name: clients.getName(req.query.uid) || '',
+                    latency: clients.getLatency(req.query.uid) || 0
+                }
+            },
+            roomSetup: req.body.roomSetup
+        });
+    }
+    
+    console.log(`Made room: ${roomID} with admin ${req.query.uid}.`);
+    res.status(201).send({ room: rooms.get(roomID)?.getRoomData() })
 });
 
 RoomRouter.get('/:room', (req: Request, res: Response) => {
+    const clients = getClients();
     const room = req.params.room;
-    // TODO: eventually provide JWTs to clients instead of having to pass in query (NOT IMPORTANT FOR MVP)
     const uid = req.query.uid;
     if (typeof uid === 'string') {
-        if (!getClients().inRoom(uid, room)) res.status(403).send("Forbidden: Provided uid is not in the requested room.");
+        if (!clients.inRoom(uid, room)) res.status(403).send("Forbidden: Provided uid is not in the requested room.");
         // TODO: get real room information
         res.status(200).send({
             room

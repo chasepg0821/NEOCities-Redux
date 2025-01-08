@@ -1,5 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useAppSelector } from '../lib/util/store/hooks'
+import { cloneDeep } from 'lodash';
+import { MVPRoom } from '../lib/MVPConstants/defaultRoom';
 
 export const Route = createFileRoute('/make-room')({
   component: RouteComponent,
@@ -11,13 +13,13 @@ function RouteComponent() {
 
   const handleMakeRoom = () => {
     //TODO: Handle REST POST call to make the room. Redirect to room/$roomID after successful REST response.
-    fetch("http://localhost:3000/api/room/make-room", {
+    fetch(`http://localhost:3000/api/room/make-room?uid=${user.id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        user
+        roomSetup: cloneDeep(MVPRoom)
       })
     })
     .then((res) => {
@@ -27,7 +29,8 @@ function RouteComponent() {
       return res.json();
     })
     .then((data) => {
-      navigate({ to: `/room/${data.roomID}`});
+      console.log(data);
+      navigate({ to: `/room/${data.room.id}`});
     })
     .catch((e) => {
       console.log(e);

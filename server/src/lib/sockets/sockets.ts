@@ -3,11 +3,14 @@ import http from "http"
 import { ClientToServerEvents, InterServerEvents, AppServerType, ServerToClientEvents, SocketData } from "./socketTypes";
 import { getClients } from "../clients";
 import { joinRoom, leaveRoom, pong } from "./socketHandlers";
+import { getRooms } from "../rooms";
+import { forEach } from "lodash";
 
 let io: AppServerType;
 
 export function initSocketServer(server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>) {
   const clients = getClients();
+  const rooms = getRooms();
 
   io = new Server<
     ClientToServerEvents,
@@ -53,8 +56,18 @@ export function initSocketServer(server: http.Server<typeof http.IncomingMessage
   });
 
   setInterval(() => {
-    const timestamp = Date.now();
-    io.emit("ping", timestamp);
+    // emit a ping to users only in a room, and notify that room of the new pings
+    rooms.getMap().forEach((room, roomID) => {
+      const latencies: { [id: string]: { latency: number }} = {}
+      forEach(room.getRoomData().users, (_, uid) => {
+        latencies[uid] = {
+          latency: clients.getLatency(uid) || -1
+        }
+      });
+      const timestamp = Date.now();
+      io.in(roomID).emit("ping", timestamp);
+      io.in(roomID).emit("latencies", latencies);
+    });
 }, 5000);
 }
 

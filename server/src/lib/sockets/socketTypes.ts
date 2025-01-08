@@ -2,6 +2,7 @@ import { Server, Socket } from "socket.io";
 
 export interface ServerToClientEvents {
     ping: (timestamp: number) => void;
+    latencies: (latencies: { [id: string]: { latency: number } }) => void;
     joinResponse: (success: boolean, reason?: string) => void; 
 }
 

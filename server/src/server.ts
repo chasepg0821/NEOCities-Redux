@@ -6,11 +6,13 @@ import cors from "cors"
 import { initSocketServer } from "./lib/sockets/sockets"
 import { router } from "./lib/routes"
 import { initClients } from "./lib/clients"
+import { initRooms } from "./lib/rooms"
 
 const app = express();
 const server = http.createServer(app);
 
 initClients();
+initRooms();
 initSocketServer(server);
 
 app.use(express.json());
@@ -21,6 +23,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+// TODO: eventually provide JWTs to clients instead of having to pass in query (NOT IMPORTANT FOR MVP)
 // REST endpoint example
 app.use('/api', router);
 
