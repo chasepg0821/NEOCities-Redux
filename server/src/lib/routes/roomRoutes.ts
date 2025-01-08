@@ -26,18 +26,13 @@ RoomRouter.post('/make-room', (req: Request, res: Response) => {
         rooms.add({
             id: roomID,
             admin: req.query.uid,
-            users: {
-                [req.query.uid]: {
-                    name: clients.getName(req.query.uid) || '',
-                    latency: clients.getLatency(req.query.uid) || 0
-                }
-            },
+            users: {},
             roomSetup: req.body.roomSetup
         });
     }
     
     console.log(`Made room: ${roomID} with admin ${req.query.uid}.`);
-    res.status(201).send({ room: rooms.get(roomID)!.getLobbyData() })
+    res.status(201).send({room: roomID});
 });
 
 RoomRouter.get('/:room', (req: Request, res: Response) => {

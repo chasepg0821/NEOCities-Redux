@@ -1,8 +1,9 @@
-import { useNavigate, UseNavigateResult } from "@tanstack/react-router"
+import { UseNavigateResult } from "@tanstack/react-router"
 import { RoomLobbyData } from "../../../store/roomTypes"
 import { JOINED_ROOM } from "../../../store/slices/roomSlice"
+import { AppDispatch } from "../../../store/store";
 
-export const joinResponse = (dispatch, nav: UseNavigateResult<string>, success: boolean, info: string | RoomLobbyData) => {
+export const joinResponse = (dispatch: AppDispatch, nav: UseNavigateResult<string>, success: boolean, info: string | RoomLobbyData) => {
     if (success && typeof info === 'object') {
         dispatch(JOINED_ROOM(info))
         nav({ to: `/room/${info.id}/` })

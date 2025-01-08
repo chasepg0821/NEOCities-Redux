@@ -1,7 +1,9 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useAppSelector } from '../lib/util/store/hooks'
-import { cloneDeep } from 'lodash';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useAppDispatch, useAppSelector } from '../lib/util/store/hooks';
 import { MVPRoom } from '../lib/MVPConstants/defaultRoom';
+import { JOINED_ROOM } from '../lib/util/store/slices/roomSlice';
+import { useContext } from 'react';
+import { SocketContext } from '../lib/util/socket/SocketProvider';
 
 export const Route = createFileRoute('/make-room')({
   component: RouteComponent,
@@ -9,7 +11,7 @@ export const Route = createFileRoute('/make-room')({
 
 function RouteComponent() {
   const user = useAppSelector((store) => store.auth);
-  const navigate = useNavigate({ from: '/make-room'});
+  const socket = useContext(SocketContext);
 
   const handleMakeRoom = () => {
     //TODO: Handle REST POST call to make the room. Redirect to room/$roomID after successful REST response.
@@ -19,7 +21,7 @@ function RouteComponent() {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        roomSetup: cloneDeep(MVPRoom)
+        roomSetup: MVPRoom
       })
     })
     .then((res) => {
@@ -29,8 +31,7 @@ function RouteComponent() {
       return res.json();
     })
     .then((data) => {
-      console.log(data);
-      navigate({ to: `/room/${data.room.id}`});
+      socket?.sendEvent("joinRoom", data.room);
     })
     .catch((e) => {
       console.log(e);
