@@ -55,6 +55,12 @@ export interface RoomLobbyData {
     users: {
         [id: string]: UserType;
     }
+    roles: {
+        [id: RoleID]: {
+            name: string;
+            color: string;
+        }
+    }
     roleAssignments: {
         [id: RoleID]: UserID;
     }

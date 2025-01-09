@@ -32,6 +32,11 @@ export const joinRoom = (io: AppServerType, socket: AppSocketType, room: string,
     clients.setRoom(socket.data.uid, room);
     // add socket to the io room
     socket.join(room);
+    // notify others in the room of the new user
+    socket.broadcast.in(room).emit("userJoined", socket.data.uid, {
+        name: clients.getName(socket.data.uid) || '',
+        latency: clients.getLatency(socket.data.uid) || 0
+    });
     // notify the client that they joined the room
     socket.emit("joinResponse", true, rooms.get(room)!.getLobbyData());
 }

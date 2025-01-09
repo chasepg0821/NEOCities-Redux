@@ -1,5 +1,6 @@
+import { forEach } from "lodash";
 import { GameInstance } from "./gameInstance";
-import { RoomDataType, RoomLobbyData, RoomSetupType, TaskID, TaskType, UserID, UserType } from "./roomTypes";
+import { RoleID, RoomDataType, RoomLobbyData, RoomSetupType, TaskID, TaskType, UserID, UserType } from "./roomTypes";
 
 export class RoomInstance {
     private roomData: RoomDataType;
@@ -26,10 +27,19 @@ export class RoomInstance {
     }
 
     public getLobbyData(): RoomLobbyData {
+        const roles: { [id: RoleID]: { name: string, color: string }} = {};
+        forEach(this.roomData.roomSetup.roles, (role, rid) => {
+            roles[parseInt(rid)] = {
+                name: role.name,
+                color: role.color
+            }
+        })
+
         return {
             id: this.roomData.id,
             admin: this.getAdmin(),
             users: this.getUsers(),
+            roles,
             roleAssignments: this.roomData.roomSetup.roleAssignments
         }
     }

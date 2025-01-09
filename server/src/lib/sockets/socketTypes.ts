@@ -1,17 +1,18 @@
 import { Server, Socket } from "socket.io";
-import { RoomLobbyData, UserID, UserType } from "../rooms";
+import { RoleID, RoomLobbyData, UserID, UserType } from "../rooms";
 
 export interface ServerToClientEvents {
     ping: (timestamp: number) => void;
     latencies: (latencies: { [id: string]: { latency: number } }) => void;
-    joinResponse: (success: boolean, info?: string | RoomLobbyData) => void;
-    userJoined: (user: UserType) => void;
+    joinResponse: (success: boolean, info: string | RoomLobbyData) => void;
+    userJoined: (id: UserID, user: UserType) => void;
     userLeft: (id: UserID) => void;
 }
 
 export interface ClientToServerEvents {
-    joinRoom: (room: string, password?: string) => void;
+    joinRoom: (room: string) => void;
     leaveRoom: () => void;
+    assignRole: (role: RoleID, user: UserID) => void;
     pong: (timestamp: number) => void;
 }
 
