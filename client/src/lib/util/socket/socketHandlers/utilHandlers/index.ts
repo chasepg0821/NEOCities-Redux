@@ -1,10 +1,9 @@
 import { UseNavigateResult } from "@tanstack/react-router"
 import { ClientSocketType } from "../../SocketType"
 import { ping } from "./ping"
+import { AppDispatch } from "../../../store/store"
 
-export * from "./ping"
-
-export const addUtilHandlers = (socket: ClientSocketType, nav: UseNavigateResult<string>) => {
+export const addUtilHandlers = (socket: ClientSocketType, nav: UseNavigateResult<string>, dispatch: AppDispatch) => {
     socket.on("ping", (timestamp: number) => {
         ping(socket, timestamp);
     })

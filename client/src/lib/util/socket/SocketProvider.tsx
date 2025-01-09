@@ -1,9 +1,9 @@
 import { createContext, PropsWithChildren, useEffect, useRef } from "react";
 import { SocketContextType } from "./SocketContextType";
-import { io, Socket } from "socket.io-client";
+import { io } from "socket.io-client";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { ClientSocketType, EmitEvents, ListenEvents } from "./SocketType";
-import { addRoomHandlers, addUtilHandlers, removeRoomHandlers, removeUtilHandlers } from "./socketHandlers";
+import { addGameHandlers, addRoomHandlers, addUtilHandlers, removeGameHandlers, removeRoomHandlers, removeUtilHandlers } from "./socketHandlers";
 import { useNavigate } from "@tanstack/react-router";
 
 export const SocketContext = createContext<SocketContextType | undefined>(undefined);
@@ -14,14 +14,6 @@ export const SocketProvider = ({ children } : PropsWithChildren) => {
     const nav = useNavigate();
     const dispatch = useAppDispatch();
 
-    const addListener = (event: keyof ListenEvents, cb: (...args: any[]) => void) => {
-        socket.current?.on(event, cb);
-    }
-
-    const removeListener = (event: keyof ListenEvents) => {
-        socket.current?.off(event);
-    }
-
     const sendEvent = (event: keyof EmitEvents, ...args: Parameters<EmitEvents[keyof EmitEvents]>) => {
         socket.current?.emit(event, ...args);
     }
@@ -30,7 +22,8 @@ export const SocketProvider = ({ children } : PropsWithChildren) => {
         if (socket.current) {
             removeUtilHandlers(socket.current);
             removeRoomHandlers(socket.current);
-            socket.current?.disconnect();
+            removeGameHandlers(socket.current);
+            socket.current.disconnect();
         }
         socket.current = undefined;
     }
@@ -69,8 +62,9 @@ export const SocketProvider = ({ children } : PropsWithChildren) => {
             }
         });
       
-        addUtilHandlers(newSocket, nav);
+        addUtilHandlers(newSocket, nav, dispatch);
         addRoomHandlers(newSocket, nav, dispatch);
+        addGameHandlers(newSocket, nav, dispatch);
 
         socket.current = newSocket;
     }
@@ -82,8 +76,6 @@ export const SocketProvider = ({ children } : PropsWithChildren) => {
 
     return (
         <SocketContext.Provider value={{
-            addListener,
-            removeListener,
             sendEvent,
             connectSocket,
             disconnectSocket

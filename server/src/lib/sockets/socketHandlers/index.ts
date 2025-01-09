@@ -1,3 +1,3 @@
-export * from "./util"
-export * from "./room"
+export * from "./utilHandlers"
+export * from "./roomHandlers"
 // export * from "./game"

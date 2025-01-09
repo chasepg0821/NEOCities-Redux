@@ -13,6 +13,7 @@ import {
 
 import AuthReducer from './slices/authSlice';
 import RoomReducer from './slices/roomSlice';
+import GameReducer from './slices/gameSlice';
 
 const persistConfig = {
 	key: 'root',
@@ -23,6 +24,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
     auth: AuthReducer,
 	room: RoomReducer,
+	game: GameReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
