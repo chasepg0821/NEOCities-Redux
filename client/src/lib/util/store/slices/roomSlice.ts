@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { RoomLobbyData, UserID, UserType } from '../roomTypes';
+import { RoleID, RoomLobbyData, UserID, UserType } from '../roomTypes';
 import { forEach } from 'lodash';
 
 const initialState: RoomLobbyData = {
@@ -32,6 +32,9 @@ export const roomSlice = createSlice({
         },
         USER_LEFT: (state, action: PayloadAction<UserID>) => {
             delete state.users[action.payload];
+        },
+        ASSIGNED_ROLE: (state, action: PayloadAction<{ role: RoleID, user: UserID }>) => {
+            state.roleAssignments[action.payload.role] = action.payload.user;
         }
     },
 });
@@ -40,7 +43,8 @@ export const {
     JOINED_ROOM,
     LATENCIES,
     USER_JOINED,
-    USER_LEFT
+    USER_LEFT,
+    ASSIGNED_ROLE
 } = roomSlice.actions;
 
 const RoomReducer = roomSlice.reducer;

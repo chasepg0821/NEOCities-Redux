@@ -2,7 +2,7 @@ import { Server } from "socket.io"
 import http from "http"
 import { ClientToServerEvents, InterServerEvents, AppServerType, ServerToClientEvents, SocketData } from "./socketTypes";
 import { getClients } from "../clients";
-import { joinRoom, leaveRoom, pong } from "./socketHandlers";
+import { addRoomHandlers, addUtilHandlers } from "./socketHandlers";
 import { getRooms } from "../rooms";
 import { forEach } from "lodash";
 
@@ -36,17 +36,8 @@ export function initSocketServer(server: http.Server<typeof http.IncomingMessage
       name: socket.handshake.auth.uname 
     });
 
-    socket.on("pong", (timestamp: number) => {
-      pong(socket, timestamp);
-    });
-
-    socket.on("joinRoom", (room: string, password?: string) => {
-      joinRoom(io, socket, room, password);
-    });
-
-    socket.on("leaveRoom", () => {
-      leaveRoom(io, socket);
-    })
+    addUtilHandlers(io, socket);
+    addRoomHandlers(io, socket);
 
     socket.on("disconnect", () => {
       // TODO: eventually we need to do garbage collection of clients

@@ -1,8 +1,8 @@
 import { getRooms } from "../../../rooms";
 import { getClients } from "../../../clients";
-import { AppServerType, AppSocketType } from "../../socketTypes";
+import { AppSocketType } from "../../socketTypes";
 
-export const joinRoom = (io: AppServerType, socket: AppSocketType, room: string, password?: string) => {
+export const joinRoom = (socket: AppSocketType, room: string, password?: string) => {
     const clients = getClients();
     const rooms = getRooms();
 
@@ -21,7 +21,7 @@ export const joinRoom = (io: AppServerType, socket: AppSocketType, room: string,
         // remove user from the io room
         socket.leave(clients.getRoom(socket.data.uid)!);
         // notify other clients in the room that a user left
-        io.in(currRoom!).emit("userLeft", socket.data.uid)
+        socket.broadcast.in(currRoom!).emit("userLeft", socket.data.uid)
     }
 
     // add user to room instance and update client session

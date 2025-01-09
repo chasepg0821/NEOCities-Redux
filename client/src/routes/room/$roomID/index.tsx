@@ -40,7 +40,7 @@ function RouteComponent() {
       socket?.sendEvent("assignRole", rid, e.target.value);
     }
 
-    const renderAssignments = () => {
+    const renderAssignments = useMemo(() => {
       return map(roleAssignments, (_, rid) => {
         return (
           <div>
@@ -53,13 +53,13 @@ function RouteComponent() {
           </div>
         )
       });
-    };
+    }, [roleAssignments]);
 
     return (
         <>
         <h1>Lobby</h1>
         {renderUsers()}
-        {renderAssignments()}
+        {renderAssignments}
         <button onClick={() => nav({ to: "/" })}>Home</button>
         <button onClick={() => nav({ to: `/room/${roomID}/stage` })}>Stage</button>
         <button onClick={() => {

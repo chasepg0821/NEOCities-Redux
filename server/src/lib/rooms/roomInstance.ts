@@ -26,6 +26,10 @@ export class RoomInstance {
         return this.roomData.admin;
     }
 
+    public getID(): string {
+        return this.roomData.id;
+    }
+
     public getLobbyData(): RoomLobbyData {
         const roles: { [id: RoleID]: { name: string, color: string }} = {};
         forEach(this.roomData.roomSetup.roles, (role, rid) => {
@@ -46,6 +50,10 @@ export class RoomInstance {
 
     public setSetup(roomSetup: RoomSetupType): void {
         this.roomData.roomSetup = roomSetup;
+    }
+
+    public assignRole(role: RoleID, user: UserID): void {
+        this.roomData.roomSetup.roleAssignments[role] = user;
     }
 
     public stageGame(): void {

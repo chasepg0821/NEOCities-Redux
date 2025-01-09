@@ -2,7 +2,7 @@ import { getRooms } from "../../../rooms";
 import { getClients } from "../../../clients";
 import { AppServerType, AppSocketType } from "../../socketTypes";
 
-export const leaveRoom = (io: AppServerType, socket: AppSocketType) => {
+export const leaveRoom = (socket: AppSocketType) => {
     const clients = getClients();
     const rooms = getRooms();
 
@@ -14,6 +14,6 @@ export const leaveRoom = (io: AppServerType, socket: AppSocketType) => {
         // remove user from the io room
         socket.leave(clients.getRoom(socket.data.uid)!);
         // notify other clients in the room that a user left
-        io.in(currRoom!).emit("userLeft", socket.data.uid)
+        socket.broadcast.in(currRoom!).emit("userLeft", socket.data.uid)
     }
 }
