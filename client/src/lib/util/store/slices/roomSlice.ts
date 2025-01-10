@@ -5,7 +5,10 @@ import { forEach } from 'lodash';
 
 const initialState: LobbyDataType = {
 	id: "",
-    admin: "",
+    admin: {
+        id: "",
+        name: ""
+    },
 	users: {},
     roles: {},
     roleAssignments: {}
@@ -34,7 +37,13 @@ export const roomSlice = createSlice({
             delete state.users[action.payload];
         },
         ASSIGNED_ROLE: (state, action: PayloadAction<{ role: RoleID, user: UserID }>) => {
-            state.roleAssignments[action.payload.role] = action.payload.user;
+            forEach(state.roleAssignments, (u, r) => {
+                if (parseInt(r) === action.payload.role) {
+                    state.roleAssignments[parseInt(r)] = action.payload.user
+                } else if (u === action.payload.user) {
+                    state.roleAssignments[parseInt(r)] = ""
+                }
+            });
         }
     },
 });

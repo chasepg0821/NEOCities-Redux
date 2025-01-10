@@ -61,7 +61,13 @@ export class RoomInstance {
     }
 
     public assignRole(role: RoleID, user: UserID): void {
-        this.roomData.roomSetup.roleAssignments[role] = user;
+        forEach(this.roomData.roomSetup.roleAssignments, (u, r) => {
+            if (parseInt(r) === role) {
+                this.roomData.roomSetup.roleAssignments[parseInt(r)] = user
+            } else if (u === user) {
+                this.roomData.roomSetup.roleAssignments[parseInt(r)] = ""
+            }
+        });
     }
 
     public stageGame(): void {
