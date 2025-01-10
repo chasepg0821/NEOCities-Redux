@@ -60,6 +60,10 @@ export class RoomInstance {
         this.roomData.roomSetup = roomSetup;
     }
 
+    public getRoleAssignments(): { [id: RoleID]: UserID } {
+        return this.roomData.roomSetup.roleAssignments;
+    }
+
     public assignRole(role: RoleID, user: UserID): void {
         forEach(this.roomData.roomSetup.roleAssignments, (u, r) => {
             if (parseInt(r) === role) {
@@ -68,6 +72,10 @@ export class RoomInstance {
                 this.roomData.roomSetup.roleAssignments[parseInt(r)] = ""
             }
         });
+    }
+
+    public hasStarted(): boolean {
+        return this.game ? true : false;
     }
 
     public stageGame(): void {
