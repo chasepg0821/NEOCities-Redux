@@ -28,12 +28,12 @@ export function initSocketServer(server: http.Server<typeof http.IncomingMessage
     socket.data.uid = socket.handshake.auth.uid;
 
     if (!clients.has(socket.data.uid)) {
-      console.log("Client connected:", socket.data.uid, " | Not in room. Terminating.");
+      console.log("Client connected:", socket.data.uid, "| Not in room. Terminating.");
       socket.emit("reqError", "Client is not in a room. Terminating connection!");
       socket.disconnect();
     } else {
-      console.log("Client connected:", socket.data.uid, " | Joining room: ", socket.data.room);
       socket.data.room = clients.getRoom(socket.data.uid)!;
+      console.log("Client connected:", socket.data.uid, " | Joining room: ", socket.data.room);
       socket.join(socket.data.room);
       socket.broadcast.in(socket.data.room).emit("userJoined", socket.data.uid, {
         name: clients.get(socket.data.uid)?.name || "",

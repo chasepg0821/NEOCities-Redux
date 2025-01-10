@@ -49,8 +49,6 @@ RoomRouter.post('/join', (req: Request, res: Response) => {
 
     // check if the room exists
     if (!rooms.has(req.body.room)) res.status(404).send({error: "Not Found", message: "Requested room does not exist."});
-    
-    console.log("hi");
 
     // add the client and put them into the room
     clients.set(req.body.user.id, {
