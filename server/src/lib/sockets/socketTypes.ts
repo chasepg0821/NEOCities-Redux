@@ -12,6 +12,7 @@ export interface ServerToClientEvents {
     userJoined: (id: UserID, user: UserType) => void;
     userLeft: (id: UserID) => void;
     assignedRole: (role: RoleID, user: UserID) => void;
+    stagedGame: (room: string) => void;
 
     //Game
 }
@@ -23,6 +24,7 @@ export interface ClientToServerEvents {
     // Room
     leaveRoom: () => void;
     assignRole: (role: RoleID, user: UserID) => void;
+    stageGame: () => void;
 
     // Game
 }

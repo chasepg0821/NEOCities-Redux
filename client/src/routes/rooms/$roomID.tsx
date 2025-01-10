@@ -18,7 +18,7 @@ function RouteComponent() {
     } else {
       setLoading(false);
     }
-  }, [])
+  }, [room])
 
   return (
       !loading && 

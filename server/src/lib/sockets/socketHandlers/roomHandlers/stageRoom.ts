@@ -1,15 +1,16 @@
 import { getClients } from "../../../clients";
-import { getRooms, RoleID, UserID } from "../../../rooms";
-import { AppServerType, AppSocketType } from "../../socketTypes";
+import { getRooms } from "../../../rooms";
+import { AppSocketType } from "../../socketTypes";
 
-export const assignRole = (socket: AppSocketType, role: RoleID, user: UserID) => {
+export const stageGame = (socket: AppSocketType) => {
     const client = getClients().get(socket.data.uid);
     const room = client?.room ? getRooms().get(client.room) : undefined;
 
     // room exists and the request is from the admin
     if (room && room.getAdmin().id === socket.data.uid) {
-        room.assignRole(role, user);
-        socket.broadcast.in(socket.data.room).emit("assignedRole", role, user);
+        room.stageGame();
+        socket.emit("stagedGame", socket.data.room);
+        socket.broadcast.in(socket.data.room).emit("stagedGame", socket.data.room);
     // room exists, but request is not from the admin
     } else if (room) {
         socket.emit("permError", "You are not the admin of the room.");

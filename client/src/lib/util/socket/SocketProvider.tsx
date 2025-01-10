@@ -2,9 +2,10 @@ import { createContext, PropsWithChildren, useEffect, useRef } from "react";
 import { SocketContextType } from "./SocketContextType";
 import { io } from "socket.io-client";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { ClientSocketType, EmitEvents, ListenEvents } from "./SocketType";
+import { ClientSocketType, EmitEvents } from "./SocketType";
 import { addGameHandlers, addRoomHandlers, addUtilHandlers, removeGameHandlers, removeRoomHandlers, removeUtilHandlers } from "./socketHandlers";
 import { useNavigate } from "@tanstack/react-router";
+import { LEFT_ROOM } from "../store/slices/roomSlice";
 
 export const SocketContext = createContext<SocketContextType | undefined>(undefined);
 
@@ -58,6 +59,7 @@ export const SocketProvider = ({ children } : PropsWithChildren) => {
             if (newSocket.active) {
                 console.log("Temporary connection failure. Reconnecting...");
             } else {
+                dispatch(LEFT_ROOM());
                 console.log("Closed socket connection.")
             }
         });

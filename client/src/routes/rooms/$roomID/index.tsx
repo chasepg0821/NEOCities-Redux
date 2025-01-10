@@ -76,7 +76,7 @@ function RouteComponent() {
             {renderUserList}
             {renderAssignments}
             <button onClick={() => nav({ to: "/" })}>Home</button>
-            <button onClick={() => nav({ to: `/room/${roomID}/stage` })}>
+            <button onClick={() => socket?.sendEvent("stageGame")}>
                 Stage
             </button>
             <button

@@ -80,17 +80,17 @@ export class RoomInstance {
 
     public stageGame(): void {
         this.game = new GameInstance(
-            this.roomData.roomSetup,
-            () => {
-                console.log("Game staged.");
-            },
-            () => {
-                console.log("Game started.");
-            },
-            () => {
-                console.log("Game ended.");
-            }
-        )
+                this.roomData.roomSetup,
+                () => {
+                    console.log("Game staged.");
+                },
+                () => {
+                    console.log("Game started.");
+                },
+                () => {
+                    console.log("Game ended.");
+                }
+            );
     }
 
     public getGame(): GameInstance | undefined {

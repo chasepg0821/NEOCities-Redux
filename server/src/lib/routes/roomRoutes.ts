@@ -44,31 +44,41 @@ RoomRouter.post('/make', (req: Request, res: Response) => {
 });
 
 RoomRouter.post('/join', (req: Request, res: Response) => {
-    const rooms = getRooms();
+    const room = getRooms().get(req.body.room);
     const clients = getClients();
 
     // check if the room exists
-    if (!rooms.has(req.body.room)) res.status(404).send({error: "Not Found", message: "Requested room does not exist."});
+    if (!room) res.status(404).send({error: "Not Found", message: "Requested room does not exist."});
 
     // add the client and put them into the room
     clients.set(req.body.user.id, {
         name: req.body.user.name,
         room: req.body.room
     });
-    rooms.get(req.body.room)!.addUser(req.body.user.id, {
-        name: req.body.user.name,
-        latency: 0
-    });
+    // if the joiner is not the admin
+    if (room?.getAdmin().id !== req.body.user.id) {
+        room!.addUser(req.body.user.id, {
+            name: req.body.user.name,
+            latency: 0
+        });
+    }
 
-    console.log(`${req.body.user.id} joind room ${req.body.room}.`);
-    res.status(200).send({room: rooms.get(req.body.room)?.getLobbyData()});
+    console.log(`${req.body.user.id} joined room ${req.body.room}.`);
+    res.status(200).send({room: room!.getLobbyData()});
 });
 
 RoomRouter.get('/:room', (req: Request, res: Response) => {
-    const room = req.params.room;
-    const rooms = getRooms();
+    const room = getRooms().get(req.params.room);
 
-    if (!rooms.has(room)) res.status(404).send({error: "Not Found", message: "Requested room does not exist."});
+    if (!room) res.status(404).send({error: "Not Found", message: "Requested room does not exist."});
 
-    res.status(200).send(rooms.get(room)!.getRoomInfo());
-})
+    res.status(200).send(room!.getRoomInfo());
+});
+
+RoomRouter.get('/:room/game', (req: Request, res: Response) => {
+    const room = getRooms().get(req.params.room);
+
+    if (!room) res.status(404).send({error: "Not Found", message: "Requested room does not exist."});
+    if (getClients().getRoom(req.query.uid as string) !== req.params.room) res.status(403).send({error: "Forbidden", message: "You are not in this room."});
+    res.status(200).send({ game: room!.getGame()?.getGameData() });
+});

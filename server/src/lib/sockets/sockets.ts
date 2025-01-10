@@ -66,8 +66,8 @@ export function initSocketServer(
                 });
         }
 
-        addUtilHandlers(io, socket);
-        addRoomHandlers(io, socket);
+        addUtilHandlers(socket);
+        addRoomHandlers(socket);
 
         socket.on("disconnect", () => {
             // TODO: if the room has started and a user left, handle recovery (INVOLVED: NOT MVP)
