@@ -67,17 +67,10 @@ RoomRouter.post('/join', (req: Request, res: Response) => {
 });
 
 RoomRouter.get('/:room', (req: Request, res: Response) => {
-    const clients = getClients();
     const room = req.params.room;
-    const uid = req.query.uid;
-    if (typeof uid === 'string') {
-        if (!clients.inRoom(uid, room)) res.status(403).send("Forbidden: Provided uid is not in the requested room.");
-        // TODO: get real room information
-        res.status(200).send({
-            room
-        });
-    } else {
-        res.status(400).send("Bad Request: uid was not a string.")
-    }
-    
+    const rooms = getRooms();
+
+    if (!rooms.has(room)) res.status(404).send({error: "Not Found", message: "Requested room does not exist."});
+
+    res.status(200).send(rooms.get(room)!.getRoomInfo());
 })

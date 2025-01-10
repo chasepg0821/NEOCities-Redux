@@ -1,5 +1,5 @@
 export interface clientDataType { 
     latency?: number;
-    room?: string;
+    room: string;
     name: string
 }

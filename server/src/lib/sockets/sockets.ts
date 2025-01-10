@@ -27,21 +27,25 @@ export function initSocketServer(server: http.Server<typeof http.IncomingMessage
   io.on("connection", (socket) => {
     socket.data.uid = socket.handshake.auth.uid;
 
-    console.log("Client connected:", socket.data.uid);
-
-    // TODO: eventually we need to do garbage collection of clients
-    clients.set(socket.data.uid, { 
-      latency: undefined, 
-      room: undefined, 
-      name: socket.handshake.auth.uname 
-    });
+    if (!clients.has(socket.data.uid)) {
+      console.log("Client connected:", socket.data.uid, " | Not in room. Terminating.");
+      socket.emit("reqError", "Client is not in a room. Terminating connection!");
+      socket.disconnect();
+    } else {
+      console.log("Client connected:", socket.data.uid, " | Joining room: ", socket.data.room);
+      socket.data.room = clients.getRoom(socket.data.uid)!;
+      socket.join(socket.data.room);
+      socket.broadcast.in(socket.data.room).emit("userJoined", socket.data.uid, {
+        name: clients.get(socket.data.uid)?.name || "",
+        latency: 0
+      });
+    }
 
     addUtilHandlers(io, socket);
     addRoomHandlers(io, socket);
 
     socket.on("disconnect", () => {
-      // TODO: eventually we need to do garbage collection of clients
-      // getClients().delete(socket.data.uid);
+      // TODO: check if user was a player in their room. Pause and wait. (INVOLVED: May not need for MVP)
       console.log("Client disconnected:", socket.data.uid);
     });
   });
@@ -54,13 +58,14 @@ export function initSocketServer(server: http.Server<typeof http.IncomingMessage
       const latencies: { [id: string]: { latency: number }} = {}
       forEach(room.getUsers(), (_, uid) => {
         latencies[uid] = {
-          latency: clients.getLatency(uid) || -1
+          latency: clients.getLatency(uid) || 0
         }
       });
-      
       io.in(roomID).emit("latencies", latencies);
     });
-}, 5000);
+  }, 5000);
+
+  // TODO: add client garbage collection
 }
 
 export function getSocketServer() {

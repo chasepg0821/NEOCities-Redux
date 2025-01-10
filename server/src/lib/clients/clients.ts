@@ -13,10 +13,6 @@ export class ClientManager {
         return this.clientData.has(id);
     }
 
-    public inRoom(id: string, room?: string): boolean {
-        return room ? this.getRoom(id) === room : this.getRoom(id) !== undefined;
-    }
-
     public get(id: string): clientDataType | undefined {
         return this.clientData.get(id);
     }
@@ -46,7 +42,7 @@ export class ClientManager {
         if (old) this.clientData.set(id, { ...old, latency });
     }
 
-    public setRoom(id: string, room: string | undefined): void {
+    public setRoom(id: string, room: string): void {
         const old = this.clientData.get(id);
         if (old) this.clientData.set(id, { ...old, room });
     }

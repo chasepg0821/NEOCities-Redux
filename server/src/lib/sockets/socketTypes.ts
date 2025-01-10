@@ -9,7 +9,6 @@ export interface ServerToClientEvents {
 
     // Room
     latencies: (latencies: { [id: string]: { latency: number } }) => void;
-    joinResponse: (success: boolean, info: string | LobbyDataType) => void;
     userJoined: (id: UserID, user: UserType) => void;
     userLeft: (id: UserID) => void;
     assignedRole: (role: RoleID, user: UserID) => void;
@@ -22,7 +21,6 @@ export interface ClientToServerEvents {
     pong: (timestamp: number) => void;
 
     // Room
-    joinRoom: (room: string) => void;
     leaveRoom: () => void;
     assignRole: (role: RoleID, user: UserID) => void;
 
@@ -35,6 +33,7 @@ export interface InterServerEvents {
 
 export interface SocketData {
     uid: string,
+    room: string
 }
 
 export type AppSocketType = Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;

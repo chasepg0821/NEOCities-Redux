@@ -1,6 +1,5 @@
 import { UseNavigateResult } from "@tanstack/react-router";
 import { ClientSocketType } from "../../SocketType"
-import { joinResponse } from "./joinResponse"
 import { AppDispatch } from "../../../store/store";
 import { latencies } from "./latencies";
 import { userJoined } from "./userJoined";
@@ -8,9 +7,6 @@ import { userLeft } from "./userLeft";
 import { assignedRole } from "./assignedRole";
 
 export const addRoomHandlers = (socket: ClientSocketType, nav: UseNavigateResult<string>, dispatch: AppDispatch) => {
-    socket.on("joinResponse", (success, info) => {
-        joinResponse(dispatch, nav, success, info);
-    })
     socket.on("latencies", (l) => {
         latencies(dispatch, l);
     })
@@ -26,7 +22,6 @@ export const addRoomHandlers = (socket: ClientSocketType, nav: UseNavigateResult
 }
 
 export const removeRoomHandlers = (socket: ClientSocketType) => {
-    socket.off("joinResponse");
     socket.off("latencies");
     socket.off("userJoined");
     socket.off("assignedRole");
