@@ -7,7 +7,7 @@ export const assignRole = (io: AppServerType, socket: AppSocketType, role: RoleI
     const room = client?.room ? getRooms().get(client.room) : undefined;
 
     // room exists and the request is from the admin
-    if (room && room.getAdmin() === socket.data.uid) {
+    if (room && room.getAdmin().id === socket.data.uid) {
         room.assignRole(role, user);
         io.in(room.getID()).emit("assignedRole", role, user);
     // room exists, but request is not from the admin

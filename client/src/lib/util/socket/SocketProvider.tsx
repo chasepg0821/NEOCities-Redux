@@ -70,7 +70,7 @@ export const SocketProvider = ({ children } : PropsWithChildren) => {
     }
 
     useEffect(() => {
-        if (!socket.current) connectSocket();
+        connectSocket();
         return () => disconnectSocket();
     }, [])
 

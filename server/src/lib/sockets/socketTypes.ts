@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { RoleID, RoomLobbyData, UserID, UserType } from "../rooms";
+import { RoleID, LobbyDataType, UserID, UserType } from "../rooms";
 
 export interface ServerToClientEvents {
     // Util
@@ -9,7 +9,7 @@ export interface ServerToClientEvents {
 
     // Room
     latencies: (latencies: { [id: string]: { latency: number } }) => void;
-    joinResponse: (success: boolean, info: string | RoomLobbyData) => void;
+    joinResponse: (success: boolean, info: string | LobbyDataType) => void;
     userJoined: (id: UserID, user: UserType) => void;
     userLeft: (id: UserID) => void;
     assignedRole: (role: RoleID, user: UserID) => void;

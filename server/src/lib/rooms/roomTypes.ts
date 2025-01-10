@@ -49,9 +49,22 @@ export interface RoomSetupType {
     }
 }
 
-export interface RoomLobbyData {
-    id: string
-    admin: string;
+export interface RoomInfoType {
+    id: string;
+    admin: {
+        id: UserID,
+        name: string,
+    };
+    numUsers: number;
+    locked?: boolean; // unused, preperation for adding passwords
+}
+
+export interface LobbyDataType {
+    id: string;
+    admin: {
+        id: UserID,
+        name: string,
+    };
     users: {
         [id: string]: UserType;
     }
@@ -68,7 +81,10 @@ export interface RoomLobbyData {
 
 export interface RoomDataType {
     id: string
-    admin: string;
+    admin: {
+        id: UserID;
+        name: string;
+    };
     users: {
         [id: string]: UserType;
     }

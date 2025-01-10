@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { RoleID, RoomLobbyData, UserID, UserType } from '../roomTypes';
+import { RoleID, LobbyDataType, UserID, UserType } from '../roomTypes';
 import { forEach } from 'lodash';
 
-const initialState: RoomLobbyData = {
+const initialState: LobbyDataType = {
 	id: "",
     admin: "",
 	users: {},
@@ -15,7 +15,7 @@ export const roomSlice = createSlice({
 	name: "room",
 	initialState,
 	reducers: {
-        JOINED_ROOM: (state, action: PayloadAction<RoomLobbyData>) => {
+        JOINED_ROOM: (state, action: PayloadAction<LobbyDataType>) => {
             state.id = action.payload.id;
             state.admin = action.payload.admin;
             state.users = action.payload.users;

@@ -14,9 +14,7 @@ function RootComponent() {
   return (
     <>
       <StoreProvider>
-        <SocketProvider>
           <Outlet />
-        </SocketProvider>
       </StoreProvider>
       <TanStackRouterDevtools position="bottom-left" />
     </>
