@@ -1,6 +1,6 @@
 import { forEach } from "lodash";
 import { GameInstance } from "./gameInstance";
-import { RoleID, RoomDataType, LobbyDataType, RoomSetupType, TaskID, TaskType, UserID, UserType, RoomInfoType, UserState } from "./roomTypes";
+import { RoleID, RoomDataType, LobbyDataType, RoomSetupType, UserID, UserType, RoomInfoType, UserState, RoomStateEnum, RoleType } from "./roomTypes";
 
 export class RoomInstance {
     private roomData: RoomDataType;
@@ -8,6 +8,14 @@ export class RoomInstance {
     
     constructor (roomData: RoomDataType) {
         this.roomData = roomData
+    }
+
+    public getID(): string {
+        return this.roomData.id;
+    }
+
+    public getRoomState(): RoomStateEnum {
+        return this.roomData.state;
     }
 
     public addUser(id: UserID, user: UserType): void {
@@ -34,8 +42,26 @@ export class RoomInstance {
         return this.roomData.admin;
     }
 
-    public getID(): string {
-        return this.roomData.id;
+    public getRoles(): { [id: RoleID]: RoleType } {
+        return this.roomData.roomSetup.roles;
+    }
+
+    public getRoleAssignments(): { [id: RoleID]: UserID } {
+        return this.roomData.roomSetup.roleAssignments;
+    }
+
+    public setRoleAssignment(role: RoleID, user: UserID): void {
+        this.roomData.roomSetup.roleAssignments[role] = user;
+    }
+
+    public assignRole(role: RoleID, user: UserID): void {
+        forEach(this.getRoleAssignments(), (u, r) => {
+            if (parseInt(r) === role) {
+                this.setRoleAssignment(parseInt(r), u);
+            } else if (u === user) {
+                this.setRoleAssignment(parseInt(r), "");
+            }
+        });
     }
 
     public getRoomInfo(): RoomInfoType {
@@ -66,24 +92,6 @@ export class RoomInstance {
 
     public setSetup(roomSetup: RoomSetupType): void {
         this.roomData.roomSetup = roomSetup;
-    }
-
-    public getRoleAssignments(): { [id: RoleID]: UserID } {
-        return this.roomData.roomSetup.roleAssignments;
-    }
-
-    public assignRole(role: RoleID, user: UserID): void {
-        forEach(this.roomData.roomSetup.roleAssignments, (u, r) => {
-            if (parseInt(r) === role) {
-                this.roomData.roomSetup.roleAssignments[parseInt(r)] = user
-            } else if (u === user) {
-                this.roomData.roomSetup.roleAssignments[parseInt(r)] = ""
-            }
-        });
-    }
-
-    public hasStarted(): boolean {
-        return this.game ? true : false;
     }
 
     public stageGame(): void {

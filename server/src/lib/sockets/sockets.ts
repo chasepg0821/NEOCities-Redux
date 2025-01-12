@@ -9,7 +9,7 @@ import {
 } from "./socketTypes";
 import { getClients } from "../clients";
 import { addRoomHandlers, addUtilHandlers, addGameHandlers } from "./socketHandlers";
-import { getRooms, RoomInstance } from "../rooms";
+import { getRooms, RoomInstance, RoomStateEnum } from "../rooms";
 import { forEach } from "lodash";
 
 let io: AppServerType;
@@ -74,7 +74,7 @@ export function initSocketServer(
         socket.on("disconnect", () => {
             // TODO: if the room has started and a user left, handle recovery (INVOLVED: NOT MVP)
             // if the room hasn't started, just remove them like they left
-            if (!room?.hasStarted()) {
+            if (room!.getRoomState() === RoomStateEnum.lobby) {
                 // remove them from any roles they were assigned to
                 forEach(room?.getRoleAssignments(), (u, r) => {
                     if (u === socket.data.uid) {

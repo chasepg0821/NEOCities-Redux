@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import { customAlphabet } from "nanoid";
 import { getClients } from "../clients";
-import { getRooms, RoomInfoType } from "../rooms";
+import { getRooms, RoomInfoType, RoomStateEnum } from "../rooms";
 
 const alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const nanoid = customAlphabet(alphabet, 5);
@@ -36,6 +36,7 @@ RoomRouter.post("/make", (req: Request, res: Response) => {
     // add the room based on the request
     rooms.add({
         id: roomID,
+        state: RoomStateEnum.lobby,
         admin: req.body.user,
         users: {
             [req.body.user.id] : {
