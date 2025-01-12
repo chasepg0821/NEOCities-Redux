@@ -4,8 +4,8 @@ import { getRooms } from "../../../rooms";
 import { AppSocketType } from "../../socketTypes";
 
 export const stageGame = (socket: AppSocketType) => {
-    const client = getClients().get(socket.data.uid);
-    const room = client?.room ? getRooms().get(client.room) : undefined;
+    const client = getClients().getClient(socket.data.uid);
+    const room = client?.room ? getRooms().getRoom(client.room) : undefined;
 
     if (!room) {
         socket.emit("reqError", "Room could not be found.");

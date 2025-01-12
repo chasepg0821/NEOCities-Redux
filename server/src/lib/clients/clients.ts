@@ -9,42 +9,21 @@ export class ClientManager {
         this.clientData = new Map<string, clientDataType>();
     }
 
-    public has(id: string): boolean {
+    public hasClient(id: string): boolean {
         return this.clientData.has(id);
     }
 
-    public get(id: string): clientDataType | undefined {
+    public getClient(id: string): clientDataType | undefined {
         return this.clientData.get(id);
     }
 
-    public getIDs(): MapIterator<string> {
-        return this.clientData.keys();
-    }
-
-    public getLatency(id: string): number | undefined {
-        return this.clientData.get(id)?.latency;
-    }
-
-    public getRoom(id: string): string | undefined {
-        return this.clientData.get(id)?.room;
-    }
-
-    public getName(id: string): string | undefined {
-        return this.clientData.get(id)?.name;
-    }
-
-    public set(id: string, data: clientDataType): void {
+    public add(id: string, data: clientDataType): void {
         this.clientData.set(id, data);
     }
 
     public setLatency(id: string, latency: number): void {
         const old = this.clientData.get(id);
         if (old) this.clientData.set(id, { ...old, latency });
-    }
-
-    public setRoom(id: string, room: string): void {
-        const old = this.clientData.get(id);
-        if (old) this.clientData.set(id, { ...old, room });
     }
 
     public delete(id: string): void {

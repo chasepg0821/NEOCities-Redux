@@ -1,11 +1,12 @@
+import { RoomInstance } from "./roomInstance";
 import {
-    EntityID,
     EntityType,
     GameDataType,
     PlayerState,
     PointType,
     RoomSetupType,
     TaskID,
+    TaskType,
     UserID
 } from "./roomTypes";
 import { cloneDeep, forEach, sortBy } from "lodash";
@@ -16,11 +17,13 @@ interface StagedTask {
 }
 
 export class GameInstance {
+    private room: RoomInstance;
     private gameData: GameDataType;
     private taskStack: StagedTask[] = [];
     private FPS: number = 30; //can change this to test feasibility of a smaller
     private TICK_RATE: number = Math.floor(1000 / this.FPS); // ms between each tick
     private DELTA: number = this.TICK_RATE / 1000; // time in seconds between each tick, used to calculate movement of entities based on speed in units/sec
+    private gameTime: number = 0;
     private secondInterval: NodeJS.Timeout | undefined = undefined; // Game logic that needs to run every
     private tickInterval: NodeJS.Timeout | undefined = undefined; // Game logic that needs to run every tick (i.e. entity movement, resource checking and points)
     private onStage: () => void;
@@ -28,7 +31,7 @@ export class GameInstance {
     private onEnd: () => void;
 
     constructor(
-        roomSetup: RoomSetupType,
+        room: RoomInstance,
         onStage: () => void,
         onStart: () => void,
         onEnd: () => void
@@ -36,7 +39,22 @@ export class GameInstance {
         this.onStage = onStage;
         this.onStart = onStart;
         this.onEnd = onEnd;
-        this.gameData = this.generateGameData(roomSetup);
+        this.room = room;
+        this.gameData = this.generateGameData(room.getSetup());
+    }
+
+    private getNewTasks(gameTime: number): {[id: TaskID]: TaskType} {
+        const newTasks: {[id: TaskID]: TaskType} = {};
+    
+        while (
+            this.taskStack.length > 0 &&
+            this.taskStack[this.taskStack.length - 1].start === gameTime
+        ) {
+            let newTaskID = this.taskStack.pop()!.id;
+            newTasks[newTaskID] = this.room.getTask(newTaskID);
+        }
+
+        return cloneDeep(newTasks);
     }
 
     private generateGameData(roomSetup: RoomSetupType) {
@@ -79,13 +97,7 @@ export class GameInstance {
             });
         });
         this.taskStack = sortBy(this.taskStack, ["start"]);
-        while (
-            this.taskStack.length >= 1 &&
-            this.taskStack[this.taskStack.length - 1].start === 0
-        ) {
-            let newTaskID = this.taskStack.pop()!.id;
-            gD.tasks[newTaskID] = { ...roomSetup.tasks[newTaskID] };
-        }
+        gD.tasks = this.getNewTasks(0);
 
         this.onStage();
         return gD;
@@ -99,8 +111,36 @@ export class GameInstance {
         this.gameData.players[id].state = state;
     }
 
+    private getEntities(): { [id: string]: EntityType } {
+        return this.gameData.entities;
+    }
+
+    private getTasks(): { [id: TaskID]: TaskType } {
+        return this.gameData.tasks;
+    }
+
+    private removeTask(id: TaskID): void {
+        delete this.gameData.tasks[id];
+    }
+
     public getGameData(): GameDataType {
         return this.gameData;
+    }
+
+    private addNewTasks(gameTime: number): void {
+        this.gameData.tasks = {
+            ...this.gameData.tasks,
+            ...this.getNewTasks(gameTime)
+        }
+
+        // TODO: notify clients of new tasks
+    }
+
+    private runSecondInterval(): void {
+        this.secondInterval = setInterval(() => {
+            this.gameTime += 1;
+            this.addNewTasks(this.gameTime);
+        }, 1000);
     }
 
     private calcDistance(p1: PointType, p2: PointType): number {
@@ -147,16 +187,40 @@ export class GameInstance {
         }
     }
 
-    private runSecondInterval(): void {
-        this.secondInterval = setInterval(() => {
-            console.log("second interval");
-        }, 1000);
+    private moveEntities(): void {
+        forEach(this.getEntities(), (entity) => this.calcEntityMove(entity));
+    }
+
+    private checkTasksForResources(): void {
+        forEach(this.getTasks(), (task, tid) => {
+            forEach(this.getEntities(), (entity, eid) => {
+                const [role, resource] = eid.split("_");
+                if (entity.location === task.location) {
+                    const resourceIndex = task.resources[0].indexOf(parseInt(resource));
+
+                    // last resource needed
+                    if (resourceIndex > -1 && task.resources[0].length === 1 && task.resources.length === 1) {
+                        this.removeTask(parseInt(tid));
+                        // TODO: add score and tell users of the completed task
+                    // last resource needed for this phase
+                    } else if (resourceIndex > -1 && task.resources[0].length === 1) {
+                        task.resources.splice(0, 1);
+                        // TODO: add score and resend resources to clients for the task
+                    // resource needed
+                    } else if (resourceIndex > -1) {
+                        task.resources[0].splice(resourceIndex, 1);
+                        // TODO: add score and resend resources to clients for the task
+                    }
+                    
+                }
+            });
+        });
     }
 
     private runTickInterval(): void {
         this.tickInterval = setInterval(() => {
-            // move entities
-            forEach(this.gameData.entities, (entity) => this.calcEntityMove(entity));
+            this.moveEntities();
+            this.checkTasksForResources();
         }, this.TICK_RATE);
     }
 

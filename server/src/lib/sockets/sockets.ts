@@ -34,7 +34,7 @@ export function initSocketServer(
 
     io.on("connection", (socket) => {
         socket.data.uid = socket.handshake.auth.uid;
-        const client = clients.get(socket.data.uid);
+        const client = clients.getClient(socket.data.uid);
         let room: RoomInstance | undefined = undefined;
 
         if (!client) {
@@ -49,8 +49,8 @@ export function initSocketServer(
             );
             socket.disconnect();
         } else {
-            socket.data.room = clients.getRoom(socket.data.uid)!;
-            room = rooms.get(socket.data.room);
+            socket.data.room = clients.getClient(socket.data.uid)?.room!;
+            room = rooms.getRoom(socket.data.room);
             console.log(
                 "Client connected:",
                 socket.data.uid,
@@ -61,7 +61,7 @@ export function initSocketServer(
             socket.broadcast
                 .in(socket.data.room)
                 .emit("userJoined", socket.data.uid, {
-                    name: clients.get(socket.data.uid)?.name || "",
+                    name: clients.getClient(socket.data.uid)?.name || "",
                     latency: 0,
                     state: room?.getUserState(socket.data.uid) || "waiting",
                 });
@@ -93,7 +93,7 @@ export function initSocketServer(
                     .in(socket.data.room)
                     .emit("userLeft", socket.data.uid);
 
-                getClients().delete(socket.data.uid);
+                clients.delete(socket.data.uid);
                 socket.disconnect();
             }
             console.log("Client disconnected:", socket.data.uid);
@@ -108,7 +108,7 @@ export function initSocketServer(
             const latencies: { [id: string]: { latency: number } } = {};
             forEach(room.getUsers(), (_, uid) => {
                 latencies[uid] = {
-                    latency: clients.getLatency(uid) || 0
+                    latency: clients.getClient(uid)?.latency || 0
                 };
             });
             io.in(roomID).emit("latencies", latencies);

@@ -1,6 +1,6 @@
 import { forEach } from "lodash";
 import { GameInstance } from "./gameInstance";
-import { RoleID, RoomDataType, LobbyDataType, RoomSetupType, UserID, UserType, RoomInfoType, UserState, RoomStateEnum, RoleType } from "./roomTypes";
+import { RoleID, RoomDataType, LobbyDataType, RoomSetupType, UserID, UserType, RoomInfoType, UserState, RoomStateEnum, RoleType, TaskID, TaskType } from "./roomTypes";
 
 export class RoomInstance {
     private roomData: RoomDataType;
@@ -16,6 +16,10 @@ export class RoomInstance {
 
     public getRoomState(): RoomStateEnum {
         return this.roomData.state;
+    }
+
+    public getAdmin(): { id: UserID, name: string } {
+        return this.roomData.admin;
     }
 
     public addUser(id: UserID, user: UserType): void {
@@ -38,10 +42,6 @@ export class RoomInstance {
         this.roomData.users[id].state = state;
     }
 
-    public getAdmin(): { id: UserID, name: string } {
-        return this.roomData.admin;
-    }
-
     public getRoles(): { [id: RoleID]: RoleType } {
         return this.roomData.roomSetup.roles;
     }
@@ -50,7 +50,7 @@ export class RoomInstance {
         return this.roomData.roomSetup.roleAssignments;
     }
 
-    public setRoleAssignment(role: RoleID, user: UserID): void {
+    private setRoleAssignment(role: RoleID, user: UserID): void {
         this.roomData.roomSetup.roleAssignments[role] = user;
     }
 
@@ -90,13 +90,17 @@ export class RoomInstance {
         }
     }
 
-    public setSetup(roomSetup: RoomSetupType): void {
-        this.roomData.roomSetup = roomSetup;
+    public getSetup(): RoomSetupType {
+        return this.roomData.roomSetup;
+    }
+
+    public getTask(id: TaskID): TaskType {
+        return this.roomData.roomSetup.tasks[id];
     }
 
     public stageGame(): void {
         this.game = new GameInstance(
-                this.roomData.roomSetup,
+                this,
                 () => {
                     console.log("Game staged.");
                 },

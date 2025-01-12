@@ -3,8 +3,8 @@ import { getRooms, RoleID, UserID } from "../../../rooms";
 import { AppServerType, AppSocketType } from "../../socketTypes";
 
 export const assignRole = (socket: AppSocketType, role: RoleID, user: UserID) => {
-    const client = getClients().get(socket.data.uid);
-    const room = client?.room ? getRooms().get(client.room) : undefined;
+    const client = getClients().getClient(socket.data.uid);
+    const room = client?.room ? getRooms().getRoom(client.room) : undefined;
 
     // room exists and the request is from the admin
     if (room && room.getAdmin().id === socket.data.uid) {

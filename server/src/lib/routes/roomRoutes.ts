@@ -24,13 +24,14 @@ RoomRouter.post("/make", (req: Request, res: Response) => {
 
     // get an unused room id, 5^36 possible combinations collisions should be low
     let roomID = nanoid();
-    while (rooms.has(roomID)) roomID = nanoid();
+    while (rooms.hasRoom(roomID)) roomID = nanoid();
 
     // TODO: check if the user is in another room, leave room, notify others
     // add the client
-    clients.set(req.body.user.id, {
+    clients.add(req.body.user.id, {
         name: req.body.user.name,
-        room: roomID
+        room: roomID,
+        latency: 0
     });
 
     // add the room based on the request
@@ -49,11 +50,11 @@ RoomRouter.post("/make", (req: Request, res: Response) => {
     });
 
     console.log(`Made room: ${roomID} with admin ${req.body.user.id}.`);
-    res.status(201).send({ room: rooms.get(roomID)?.getLobbyData() });
+    res.status(201).send({ room: rooms.getRoom(roomID)?.getLobbyData() });
 });
 
 RoomRouter.post("/join", (req: Request, res: Response) => {
-    const room = getRooms().get(req.body.room);
+    const room = getRooms().getRoom(req.body.room);
     const clients = getClients();
 
     // check if the room exists
@@ -64,9 +65,10 @@ RoomRouter.post("/join", (req: Request, res: Response) => {
         });
 
     // add the client and put them into the room
-    clients.set(req.body.user.id, {
+    clients.add(req.body.user.id, {
         name: req.body.user.name,
-        room: req.body.room
+        room: req.body.room,
+        latency: 0
     });
     room!.addUser(req.body.user.id, {
         name: req.body.user.name,
@@ -79,7 +81,7 @@ RoomRouter.post("/join", (req: Request, res: Response) => {
 });
 
 RoomRouter.get("/:room", (req: Request, res: Response) => {
-    const room = getRooms().get(req.params.room);
+    const room = getRooms().getRoom(req.params.room);
 
     if (!room)
         res.status(404).send({
@@ -91,14 +93,15 @@ RoomRouter.get("/:room", (req: Request, res: Response) => {
 });
 
 RoomRouter.get("/:room/game", (req: Request, res: Response) => {
-    const room = getRooms().get(req.params.room);
+    const room = getRooms().getRoom(req.params.room);
+    const clients = getClients();
 
     if (!room)
         res.status(404).send({
             error: "Not Found",
             message: "Requested room does not exist."
         });
-    if (getClients().getRoom(req.query.uid as string) !== req.params.room)
+    if (clients.getClient(req.query.uid as string)?.room !== req.params.room)
         res.status(403).send({
             error: "Forbidden",
             message: "You are not in this room."

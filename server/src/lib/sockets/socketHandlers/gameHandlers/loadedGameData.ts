@@ -2,7 +2,7 @@ import { getRooms } from "../../../rooms";
 import { AppSocketType } from "../../socketTypes";
 
 export const loadedGameData = (socket: AppSocketType) => {
-    const room = getRooms().get(socket.data.room);
+    const room = getRooms().getRoom(socket.data.room);
 
     if (!room) {
         socket.emit("reqError", "Room could not be found.");

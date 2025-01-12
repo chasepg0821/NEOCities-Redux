@@ -9,24 +9,24 @@ export class RoomsManager {
         this.rooms = new Map<string, RoomInstance>(); 
     }
 
-    public has(room: string): boolean {
+    public hasRoom(room: string): boolean {
         return this.rooms.has(room);
     }
 
-    public get(room: string): RoomInstance | undefined {
+    public getRoom(room: string): RoomInstance | undefined {
         return this.rooms.get(room);
     }
 
-    public getMap() {
+    public getMap(): Map<string, RoomInstance> {
         return this.rooms;
     }
 
-    public keys(): MapIterator<string> {
-        return this.rooms.keys();
+    public add(roomData: RoomDataType): void {
+        this.rooms.set(roomData.id, new RoomInstance(roomData));
     }
 
-    public add(roomData: RoomDataType) {
-        this.rooms.set(roomData.id, new RoomInstance(roomData));
+    public delete(id: string): void {
+        this.rooms.delete(id);
     }
 }
 
