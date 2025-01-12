@@ -12,9 +12,11 @@ export interface RoleType {
 }
 
 export type UserID = string;
+export type UserState = "waiting" | "loaded";
 export interface UserType {
     name: string,
-    latency: number
+    latency: number,
+    state: UserState
 }
 
 export type ResourceID = number;
@@ -107,11 +109,12 @@ export interface EntityType {
     }
 }
 
+export type PlayerState = UserState | "ready";
 export interface GameDataType {
     players: {
         [id: UserID]: {
             role: RoleID;
-            ready: boolean;
+            state: PlayerState;
         }
     }
     messages: MessageType[];

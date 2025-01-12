@@ -17,8 +17,9 @@ import { Route as RoomsIndexImport } from './routes/rooms/index'
 import { Route as RoomsMakeImport } from './routes/rooms/make'
 import { Route as RoomsRoomIDImport } from './routes/rooms/$roomID'
 import { Route as RoomsRoomIDIndexImport } from './routes/rooms/$roomID/index'
-import { Route as RoomsRoomIDStageImport } from './routes/rooms/$roomID/stage'
-import { Route as RoomsRoomIDPlayImport } from './routes/rooms/$roomID/play'
+import { Route as RoomsRoomIDGameImport } from './routes/rooms/$roomID/game'
+import { Route as RoomsRoomIDGameIndexImport } from './routes/rooms/$roomID/game/index'
+import { Route as RoomsRoomIDGamePlayImport } from './routes/rooms/$roomID/game/play'
 
 // Create/Update Routes
 
@@ -58,16 +59,22 @@ const RoomsRoomIDIndexRoute = RoomsRoomIDIndexImport.update({
   getParentRoute: () => RoomsRoomIDRoute,
 } as any)
 
-const RoomsRoomIDStageRoute = RoomsRoomIDStageImport.update({
-  id: '/stage',
-  path: '/stage',
+const RoomsRoomIDGameRoute = RoomsRoomIDGameImport.update({
+  id: '/game',
+  path: '/game',
   getParentRoute: () => RoomsRoomIDRoute,
 } as any)
 
-const RoomsRoomIDPlayRoute = RoomsRoomIDPlayImport.update({
+const RoomsRoomIDGameIndexRoute = RoomsRoomIDGameIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => RoomsRoomIDGameRoute,
+} as any)
+
+const RoomsRoomIDGamePlayRoute = RoomsRoomIDGamePlayImport.update({
   id: '/play',
   path: '/play',
-  getParentRoute: () => RoomsRoomIDRoute,
+  getParentRoute: () => RoomsRoomIDGameRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -109,18 +116,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RoomsIndexImport
       parentRoute: typeof rootRoute
     }
-    '/rooms/$roomID/play': {
-      id: '/rooms/$roomID/play'
-      path: '/play'
-      fullPath: '/rooms/$roomID/play'
-      preLoaderRoute: typeof RoomsRoomIDPlayImport
-      parentRoute: typeof RoomsRoomIDImport
-    }
-    '/rooms/$roomID/stage': {
-      id: '/rooms/$roomID/stage'
-      path: '/stage'
-      fullPath: '/rooms/$roomID/stage'
-      preLoaderRoute: typeof RoomsRoomIDStageImport
+    '/rooms/$roomID/game': {
+      id: '/rooms/$roomID/game'
+      path: '/game'
+      fullPath: '/rooms/$roomID/game'
+      preLoaderRoute: typeof RoomsRoomIDGameImport
       parentRoute: typeof RoomsRoomIDImport
     }
     '/rooms/$roomID/': {
@@ -130,20 +130,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RoomsRoomIDIndexImport
       parentRoute: typeof RoomsRoomIDImport
     }
+    '/rooms/$roomID/game/play': {
+      id: '/rooms/$roomID/game/play'
+      path: '/play'
+      fullPath: '/rooms/$roomID/game/play'
+      preLoaderRoute: typeof RoomsRoomIDGamePlayImport
+      parentRoute: typeof RoomsRoomIDGameImport
+    }
+    '/rooms/$roomID/game/': {
+      id: '/rooms/$roomID/game/'
+      path: '/'
+      fullPath: '/rooms/$roomID/game/'
+      preLoaderRoute: typeof RoomsRoomIDGameIndexImport
+      parentRoute: typeof RoomsRoomIDGameImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface RoomsRoomIDGameRouteChildren {
+  RoomsRoomIDGamePlayRoute: typeof RoomsRoomIDGamePlayRoute
+  RoomsRoomIDGameIndexRoute: typeof RoomsRoomIDGameIndexRoute
+}
+
+const RoomsRoomIDGameRouteChildren: RoomsRoomIDGameRouteChildren = {
+  RoomsRoomIDGamePlayRoute: RoomsRoomIDGamePlayRoute,
+  RoomsRoomIDGameIndexRoute: RoomsRoomIDGameIndexRoute,
+}
+
+const RoomsRoomIDGameRouteWithChildren = RoomsRoomIDGameRoute._addFileChildren(
+  RoomsRoomIDGameRouteChildren,
+)
+
 interface RoomsRoomIDRouteChildren {
-  RoomsRoomIDPlayRoute: typeof RoomsRoomIDPlayRoute
-  RoomsRoomIDStageRoute: typeof RoomsRoomIDStageRoute
+  RoomsRoomIDGameRoute: typeof RoomsRoomIDGameRouteWithChildren
   RoomsRoomIDIndexRoute: typeof RoomsRoomIDIndexRoute
 }
 
 const RoomsRoomIDRouteChildren: RoomsRoomIDRouteChildren = {
-  RoomsRoomIDPlayRoute: RoomsRoomIDPlayRoute,
-  RoomsRoomIDStageRoute: RoomsRoomIDStageRoute,
+  RoomsRoomIDGameRoute: RoomsRoomIDGameRouteWithChildren,
   RoomsRoomIDIndexRoute: RoomsRoomIDIndexRoute,
 }
 
@@ -157,9 +183,10 @@ export interface FileRoutesByFullPath {
   '/rooms/$roomID': typeof RoomsRoomIDRouteWithChildren
   '/rooms/make': typeof RoomsMakeRoute
   '/rooms': typeof RoomsIndexRoute
-  '/rooms/$roomID/play': typeof RoomsRoomIDPlayRoute
-  '/rooms/$roomID/stage': typeof RoomsRoomIDStageRoute
+  '/rooms/$roomID/game': typeof RoomsRoomIDGameRouteWithChildren
   '/rooms/$roomID/': typeof RoomsRoomIDIndexRoute
+  '/rooms/$roomID/game/play': typeof RoomsRoomIDGamePlayRoute
+  '/rooms/$roomID/game/': typeof RoomsRoomIDGameIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -167,9 +194,9 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/rooms/make': typeof RoomsMakeRoute
   '/rooms': typeof RoomsIndexRoute
-  '/rooms/$roomID/play': typeof RoomsRoomIDPlayRoute
-  '/rooms/$roomID/stage': typeof RoomsRoomIDStageRoute
   '/rooms/$roomID': typeof RoomsRoomIDIndexRoute
+  '/rooms/$roomID/game/play': typeof RoomsRoomIDGamePlayRoute
+  '/rooms/$roomID/game': typeof RoomsRoomIDGameIndexRoute
 }
 
 export interface FileRoutesById {
@@ -179,9 +206,10 @@ export interface FileRoutesById {
   '/rooms/$roomID': typeof RoomsRoomIDRouteWithChildren
   '/rooms/make': typeof RoomsMakeRoute
   '/rooms/': typeof RoomsIndexRoute
-  '/rooms/$roomID/play': typeof RoomsRoomIDPlayRoute
-  '/rooms/$roomID/stage': typeof RoomsRoomIDStageRoute
+  '/rooms/$roomID/game': typeof RoomsRoomIDGameRouteWithChildren
   '/rooms/$roomID/': typeof RoomsRoomIDIndexRoute
+  '/rooms/$roomID/game/play': typeof RoomsRoomIDGamePlayRoute
+  '/rooms/$roomID/game/': typeof RoomsRoomIDGameIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -192,18 +220,19 @@ export interface FileRouteTypes {
     | '/rooms/$roomID'
     | '/rooms/make'
     | '/rooms'
-    | '/rooms/$roomID/play'
-    | '/rooms/$roomID/stage'
+    | '/rooms/$roomID/game'
     | '/rooms/$roomID/'
+    | '/rooms/$roomID/game/play'
+    | '/rooms/$roomID/game/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/rooms/make'
     | '/rooms'
-    | '/rooms/$roomID/play'
-    | '/rooms/$roomID/stage'
     | '/rooms/$roomID'
+    | '/rooms/$roomID/game/play'
+    | '/rooms/$roomID/game'
   id:
     | '__root__'
     | '/'
@@ -211,9 +240,10 @@ export interface FileRouteTypes {
     | '/rooms/$roomID'
     | '/rooms/make'
     | '/rooms/'
-    | '/rooms/$roomID/play'
-    | '/rooms/$roomID/stage'
+    | '/rooms/$roomID/game'
     | '/rooms/$roomID/'
+    | '/rooms/$roomID/game/play'
+    | '/rooms/$roomID/game/'
   fileRoutesById: FileRoutesById
 }
 
@@ -259,8 +289,7 @@ export const routeTree = rootRoute
     "/rooms/$roomID": {
       "filePath": "rooms/$roomID.tsx",
       "children": [
-        "/rooms/$roomID/play",
-        "/rooms/$roomID/stage",
+        "/rooms/$roomID/game",
         "/rooms/$roomID/"
       ]
     },
@@ -270,17 +299,25 @@ export const routeTree = rootRoute
     "/rooms/": {
       "filePath": "rooms/index.tsx"
     },
-    "/rooms/$roomID/play": {
-      "filePath": "rooms/$roomID/play.tsx",
-      "parent": "/rooms/$roomID"
-    },
-    "/rooms/$roomID/stage": {
-      "filePath": "rooms/$roomID/stage.tsx",
-      "parent": "/rooms/$roomID"
+    "/rooms/$roomID/game": {
+      "filePath": "rooms/$roomID/game.tsx",
+      "parent": "/rooms/$roomID",
+      "children": [
+        "/rooms/$roomID/game/play",
+        "/rooms/$roomID/game/"
+      ]
     },
     "/rooms/$roomID/": {
       "filePath": "rooms/$roomID/index.tsx",
       "parent": "/rooms/$roomID"
+    },
+    "/rooms/$roomID/game/play": {
+      "filePath": "rooms/$roomID/game/play.tsx",
+      "parent": "/rooms/$roomID/game"
+    },
+    "/rooms/$roomID/game/": {
+      "filePath": "rooms/$roomID/game/index.tsx",
+      "parent": "/rooms/$roomID/game"
     }
   }
 }

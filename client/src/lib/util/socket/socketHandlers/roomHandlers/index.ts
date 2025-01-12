@@ -1,11 +1,11 @@
 import { UseNavigateResult } from "@tanstack/react-router";
-import { ClientSocketType } from "../../SocketType"
 import { AppDispatch } from "../../../store/store";
 import { latencies } from "./latencies";
 import { userJoined } from "./userJoined";
 import { userLeft } from "./userLeft";
 import { assignedRole } from "./assignedRole";
 import { stagedGame } from "./stagedGame";
+import { ClientSocketType } from "../events";
 
 export const addRoomHandlers = (socket: ClientSocketType, nav: UseNavigateResult<string>, dispatch: AppDispatch) => {
     socket.on("latencies", (l) => latencies(dispatch, l));

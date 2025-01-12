@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { GameDataType } from '../roomTypes';
+import { GameDataType, UserID } from '../roomTypes';
 
 const initialState: GameDataType = {
     players: {},
@@ -19,12 +19,16 @@ export const gameSlice = createSlice({
             state.roles = action.payload.roles;
             state.entities = action.payload.entities;
             state.tasks = action.payload.tasks;
+        },
+        LOADED_GAME_DATA_GAME: (state, action: PayloadAction<UserID>) => {
+            if (state.players[action.payload]) state.players[action.payload].state = "loaded";
         }
     },
 });
 
 export const {
-    STAGED_GAME
+    STAGED_GAME,
+    LOADED_GAME_DATA_GAME
 } = gameSlice.actions;
 
 const GameReducer = gameSlice.reducer;

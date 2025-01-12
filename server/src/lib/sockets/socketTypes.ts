@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { RoleID, LobbyDataType, UserID, UserType } from "../rooms";
+import { RoleID, UserID, UserType } from "../rooms";
 
 export interface ServerToClientEvents {
     // Util
@@ -15,6 +15,7 @@ export interface ServerToClientEvents {
     stagedGame: (room: string) => void;
 
     //Game
+    loadedGameData: (id: UserID) => void;
 }
 
 export interface ClientToServerEvents {
@@ -27,6 +28,7 @@ export interface ClientToServerEvents {
     stageGame: () => void;
 
     // Game
+    loadedGameData: () => void;
 }
 
 export interface InterServerEvents {

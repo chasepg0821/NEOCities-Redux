@@ -1,9 +1,9 @@
 import { UseNavigateResult } from "@tanstack/react-router"
-import { ClientSocketType } from "../../SocketType"
 import { ping } from "./ping"
 import { AppDispatch } from "../../../store/store"
 import { permError } from "./permError"
 import { reqError } from "./reqError"
+import { ClientSocketType } from "../events"
 
 export const addUtilHandlers = (socket: ClientSocketType, nav: UseNavigateResult<string>, dispatch: AppDispatch) => {
     socket.on("ping", (timestamp: number) => {

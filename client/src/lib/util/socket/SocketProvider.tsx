@@ -1,29 +1,46 @@
-import { createContext, PropsWithChildren, useEffect, useRef } from "react";
-import { SocketContextType } from "./SocketContextType";
+import { createContext, PropsWithChildren, useContext, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { ClientSocketType, EmitEvents } from "./SocketType";
-import { addGameHandlers, addRoomHandlers, addUtilHandlers, removeGameHandlers, removeRoomHandlers, removeUtilHandlers } from "./socketHandlers";
+import { addGenericGameHandlers, addRoomHandlers, addUtilHandlers, ClientSocketType, EmitEvents, ListenEvents, removeGenericGameHandlers, removeRoomHandlers, removeUtilHandlers } from "./socketHandlers";
 import { useNavigate } from "@tanstack/react-router";
 import { LEFT_ROOM } from "../store/slices/roomSlice";
 
-export const SocketContext = createContext<SocketContextType | undefined>(undefined);
+export interface ISocketContext{
+	addListener: <Ev extends keyof ListenEvents>(event: Ev, cb: ListenEvents[Ev]) => void;
+	removeListener: <Ev extends keyof ListenEvents>(event: Ev) => void;
+	sendEvent: <Ev extends keyof EmitEvents>(event: Ev, ...args: Parameters<EmitEvents[Ev]>) => void;
+	connectSocket: () => void;
+	disconnectSocket: () => void;
+}
+
+const SocketContext = createContext<ISocketContext>(undefined!);
+
+export const useSocketContext = () => useContext(SocketContext);
 
 export const SocketProvider = ({ children } : PropsWithChildren) => {
     const socket = useRef<ClientSocketType>();
-    const user = useAppSelector((state) => state.auth);
+    const user = useAppSelector((state) => state.auth); //this should never change when mounted, but if it does, it will trigger a rerender and remove from socket anyway (no crazy rerenders due to state on context)
     const nav = useNavigate();
     const dispatch = useAppDispatch();
 
-    const sendEvent = (event: keyof EmitEvents, ...args: Parameters<EmitEvents[keyof EmitEvents]>) => {
+    const sendEvent = <Ev extends keyof EmitEvents>(event: Ev, ...args: Parameters<EmitEvents[Ev]>) => {
         socket.current?.emit(event, ...args);
+    }
+
+    const addListener = <Ev extends keyof ListenEvents>(event: Ev, cb: ListenEvents[Ev]) => {
+        // @ts-ignore
+        socket.current?.on(event, cb);
+    }
+
+    const removeListener = <Ev extends keyof ListenEvents>(event: Ev) => {
+        socket.current?.off(event);
     }
 
     const disconnectSocket = () => {
         if (socket.current) {
             removeUtilHandlers(socket.current);
             removeRoomHandlers(socket.current);
-            removeGameHandlers(socket.current);
+            removeGenericGameHandlers(socket.current);
             socket.current.disconnect();
         }
         socket.current = undefined;
@@ -66,7 +83,7 @@ export const SocketProvider = ({ children } : PropsWithChildren) => {
       
         addUtilHandlers(newSocket, nav, dispatch);
         addRoomHandlers(newSocket, nav, dispatch);
-        addGameHandlers(newSocket, nav, dispatch);
+        addGenericGameHandlers(newSocket, dispatch);
 
         socket.current = newSocket;
     }
@@ -78,6 +95,8 @@ export const SocketProvider = ({ children } : PropsWithChildren) => {
 
     return (
         <SocketContext.Provider value={{
+            addListener,
+            removeListener,
             sendEvent,
             connectSocket,
             disconnectSocket

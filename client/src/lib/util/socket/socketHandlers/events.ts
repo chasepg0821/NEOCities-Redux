@@ -1,5 +1,5 @@
 import { Socket } from "socket.io-client";
-import { RoleID, UserID, UserType } from "../store/roomTypes";
+import { RoleID, UserID, UserType } from "../../store/roomTypes";
 
 export interface ListenEvents {
     // Util
@@ -15,6 +15,7 @@ export interface ListenEvents {
     stagedGame: (room: string) => void;
 
     //Game
+    loadedGameData: (id: UserID) => void;
 }
 
 export interface EmitEvents {
@@ -27,6 +28,7 @@ export interface EmitEvents {
     stageGame: () => void;
 
     // Game
+    loadedGameData: () => void;
 }
 
 export type ClientSocketType = Socket<ListenEvents, EmitEvents>;

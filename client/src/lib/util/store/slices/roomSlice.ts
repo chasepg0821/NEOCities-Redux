@@ -63,11 +63,14 @@ export const roomSlice = createSlice({
                     state.roleAssignments[parseInt(r)] = "";
                 }
             });
+        },
+        LOADED_GAME_DATA_ROOM: (state, action: PayloadAction<UserID>) => {
+            if (state.users[action.payload]) state.users[action.payload].state = "loaded";
         }
     }
 });
 
-export const { JOINED_ROOM, LEFT_ROOM, LATENCIES, USER_JOINED, USER_LEFT, ASSIGNED_ROLE } =
+export const { JOINED_ROOM, LEFT_ROOM, LATENCIES, USER_JOINED, USER_LEFT, ASSIGNED_ROLE, LOADED_GAME_DATA_ROOM} =
     roomSlice.actions;
 
 const RoomReducer = roomSlice.reducer;

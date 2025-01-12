@@ -1,4 +1,4 @@
-import { GameDataType, RoomSetupType, TaskID } from "./roomTypes";
+import { GameDataType, PlayerState, RoomSetupType, TaskID, UserID } from "./roomTypes";
 import { cloneDeep, forEach, sortBy } from "lodash";
 
 interface StagedTask {
@@ -38,7 +38,7 @@ export class GameInstance {
         forEach(roomSetup.roleAssignments, (user, role) => {
             gD.players[user] = {
                 role: parseInt(role),
-                ready: false
+                state: "waiting"
             };
         });
 
@@ -74,6 +74,14 @@ export class GameInstance {
 
         this.onStage();
         return gD;
+    }
+
+    public isPlayer(id: UserID): boolean {
+        return this.gameData.players[id] ? true : false;
+    }
+
+    public setPlayerState(id: UserID, state: PlayerState): void {
+        this.gameData.players[id].state = state;
     }
 
     public getGameData(): GameDataType {

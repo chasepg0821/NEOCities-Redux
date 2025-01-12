@@ -8,7 +8,7 @@ import {
     SocketData
 } from "./socketTypes";
 import { getClients } from "../clients";
-import { addRoomHandlers, addUtilHandlers } from "./socketHandlers";
+import { addRoomHandlers, addUtilHandlers, addGameHandlers } from "./socketHandlers";
 import { getRooms, RoomInstance } from "../rooms";
 import { forEach } from "lodash";
 
@@ -62,12 +62,14 @@ export function initSocketServer(
                 .in(socket.data.room)
                 .emit("userJoined", socket.data.uid, {
                     name: clients.get(socket.data.uid)?.name || "",
-                    latency: 0
+                    latency: 0,
+                    state: room?.getUserState(socket.data.uid) || "waiting",
                 });
         }
 
         addUtilHandlers(socket);
         addRoomHandlers(socket);
+        addGameHandlers(socket);
 
         socket.on("disconnect", () => {
             // TODO: if the room has started and a user left, handle recovery (INVOLVED: NOT MVP)

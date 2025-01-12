@@ -1,11 +1,12 @@
-import { UseNavigateResult } from "@tanstack/react-router"
-import { ClientSocketType } from "../../SocketType"
-import { AppDispatch } from "../../../store/store"
+import { UserID } from "../../../store/roomTypes";
+import { AppDispatch } from "../../../store/store";
+import { ClientSocketType } from "../events";
+import { loadedGameData } from "./loadedGameData";
 
-export const addGameHandlers = (socket: ClientSocketType, nav: UseNavigateResult<string>, dispatch: AppDispatch) => {
-    console.log("Added game handlers.")
+export const addGenericGameHandlers = (socket: ClientSocketType, dispatch: AppDispatch) => {
+    socket.on("loadedGameData", (id) => loadedGameData(dispatch, id))
 }
 
-export const removeGameHandlers = (socket: ClientSocketType) => {
-    console.log("Removed game handlers.")
+export const removeGenericGameHandlers = (socket: ClientSocketType) => {
+    socket.off("loadedGameData");
 }
