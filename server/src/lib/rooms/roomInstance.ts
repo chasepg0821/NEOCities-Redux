@@ -70,8 +70,9 @@ export class RoomInstance {
 
     public assignRole(role: RoleID, user: UserID): void {
         forEach(this.getRoleAssignments(), (u, r) => {
+            console.log(u, r);
             if (parseInt(r) === role) {
-                this.setRoleAssignment(parseInt(r), u);
+                this.setRoleAssignment(parseInt(r), user);
             } else if (u === user) {
                 this.setRoleAssignment(parseInt(r), "");
             }
