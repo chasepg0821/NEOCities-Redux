@@ -8,7 +8,7 @@ export interface RoleType {
     name: string;
     color: string;
     base: PointType;
-    resources: number[];
+    resources: ResourceID[];
 }
 
 export type UserID = string;
@@ -32,7 +32,7 @@ export interface TaskType {
     start: number; // time, in seconds, at which the task should trigger
     duration: number; // time, in seconds, for how long the task should last
     location: PointType;
-    resources: number[][]; // offers cascading requirements, task is complete when array is empty
+    resources: ResourceID[][]; // offers cascading requirements, task is complete when array is empty
 }
 
 export interface RoomSetupType {
@@ -51,22 +51,21 @@ export interface RoomSetupType {
     }
 }
 
+export interface AdminType {
+    id: UserID;
+    name: string;
+}
+
 export interface RoomInfoType {
     id: string;
-    admin: {
-        id: UserID,
-        name: string,
-    };
+    admin: AdminType;
     numUsers: number;
     locked?: boolean; // unused, preperation for adding passwords
 }
 
 export interface LobbyDataType {
     id: string;
-    admin: {
-        id: UserID,
-        name: string,
-    };
+    admin: AdminType;
     users: {
         [id: string]: UserType;
     }
@@ -89,10 +88,7 @@ export enum RoomStateEnum {
 export interface RoomDataType {
     id: string
     state: RoomStateEnum
-    admin: {
-        id: UserID;
-        name: string;
-    };
+    admin: AdminType;
     users: {
         [id: string]: UserType;
     }
@@ -106,24 +102,33 @@ export interface MessageType {
 }
 
 export type EntityID = string; // "{RoleID}_{ResourceID}"
+export interface EntityDestination {
+    name: string;
+    steps: PointType[];
+}
 export interface EntityType {
     speed: number;
     state: "Idle" | "Moving";
     location: PointType;
-    destination: {
-        name: string;
-        steps: PointType[];
-    }
+    destination: EntityDestination;
 }
 
 export type PlayerState = UserState | "ready";
+export interface PlayerType {
+    role: RoleID;
+    state: PlayerState;
+}
+
+export interface GameScores {
+    team: number;
+    [id: UserID]: number;
+}
+
 export interface GameDataType {
     players: {
-        [id: UserID]: {
-            role: RoleID;
-            state: PlayerState;
-        }
+        [id: UserID]: PlayerType;
     }
+    scores: GameScores;
     messages: MessageType[];
     roles: {
         [id: RoleID]: RoleType;

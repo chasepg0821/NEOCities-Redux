@@ -1,8 +1,10 @@
 import { forEach } from "lodash";
 import { GameInstance } from "./gameInstance";
 import { RoleID, RoomDataType, LobbyDataType, RoomSetupType, UserID, UserType, RoomInfoType, UserState, RoomStateEnum, RoleType, TaskID, TaskType } from "./roomTypes";
+import { AppServerType, getSocketServer } from "../sockets";
 
 export class RoomInstance {
+    private io: AppServerType = getSocketServer();
     private roomData: RoomDataType;
     private game: GameInstance | undefined;
     
@@ -22,12 +24,24 @@ export class RoomInstance {
         return this.roomData.admin;
     }
 
+    public getGameDuration(): number {
+        return this.roomData.roomSetup.time;
+    }
+
     public addUser(id: UserID, user: UserType): void {
         this.roomData.users[id] = user;
     }
 
     public removeUser(id: UserID): void {
+        // remove them from any roles they were assigned to
+        forEach(this.getRoleAssignments(), (u, r) => {
+            if (u === id) {
+                this.setRoleAssignment(parseInt(r), "");
+                this.io.in(this.getID()).emit("assignedRole", parseInt(r), "");
+            }
+        });
         delete this.roomData.users[id]
+        this.io.in(this.getID()).emit("userLeft", id);
     }
 
     public getUsers(): {[id: UserID]: UserType } {
@@ -62,6 +76,8 @@ export class RoomInstance {
                 this.setRoleAssignment(parseInt(r), "");
             }
         });
+
+        this.io.in(this.getID()).emit("assignedRole", role, user);
     }
 
     public getRoomInfo(): RoomInfoType {
@@ -99,18 +115,8 @@ export class RoomInstance {
     }
 
     public stageGame(): void {
-        this.game = new GameInstance(
-                this,
-                () => {
-                    console.log("Game staged.");
-                },
-                () => {
-                    console.log("Game started.");
-                },
-                () => {
-                    console.log("Game ended.");
-                }
-            );
+        this.game = new GameInstance(this);
+        this.io.in(this.getID()).emit("stagedGame", this.getID());
     }
 
     public getGame(): GameInstance | undefined {

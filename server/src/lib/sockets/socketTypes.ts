@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { RoleID, UserID, UserType } from "../rooms";
+import { EntityDestination, EntityID, EntityType, GameScores, MessageType, PointType, ResourceID, RoleID, TaskID, TaskType, UserID, UserType } from "../rooms";
 
 export interface ServerToClientEvents {
     // Util
@@ -14,8 +14,15 @@ export interface ServerToClientEvents {
     assignedRole: (role: RoleID, user: UserID) => void;
     stagedGame: (room: string) => void;
 
-    //Game
+    // Game
+    startedGame: () => void;
     loadedGameData: (id: UserID) => void;
+    updateEntityDestination: (id: EntityID, destination: EntityDestination) => void;
+    newTasks: (tasks: { [id: TaskID]: TaskType }) =>  void;
+    updateTaskResources: (id: TaskID, resources: ResourceID[][]) =>  void;
+    completedTask: (id: TaskID) => void;
+    scores: (scores: GameScores) => void;
+    newMessage: (message: MessageType) => void;
 }
 
 export interface ClientToServerEvents {
@@ -29,6 +36,8 @@ export interface ClientToServerEvents {
 
     // Game
     loadedGameData: () => void;
+    sendResource: (entity: EntityID, task: TaskID) => void;
+    sendMessage: (text: string) => void;
 }
 
 export interface InterServerEvents {

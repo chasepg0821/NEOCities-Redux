@@ -1,5 +1,5 @@
 import { Socket } from "socket.io-client";
-import { RoleID, UserID, UserType } from "../../store/roomTypes";
+import { EntityDestination, EntityID, GameScores, MessageType, ResourceID, RoleID, TaskID, TaskType, UserID, UserType } from "../../store/roomTypes";
 
 export interface ListenEvents {
     // Util
@@ -14,8 +14,15 @@ export interface ListenEvents {
     assignedRole: (role: RoleID, user: UserID) => void;
     stagedGame: (room: string) => void;
 
-    //Game
+    // Game
+    startedGame: () => void;
     loadedGameData: (id: UserID) => void;
+    updateEntityDestination: (id: EntityID, destination: EntityDestination) => void;
+    newTasks: (tasks: { [id: TaskID]: TaskType }) =>  void;
+    updateTaskResources: (id: TaskID, resources: ResourceID[][]) =>  void;
+    completedTask: (id: TaskID) => void;
+    scores: (scores: GameScores) => void;
+    newMessage: (message: MessageType) => void;
 }
 
 export interface EmitEvents {
@@ -29,6 +36,8 @@ export interface EmitEvents {
 
     // Game
     loadedGameData: () => void;
+    sendResource: (entity: EntityID, task: TaskID) => void;
+    sendMessage: (text: string) => void;
 }
 
 export type ClientSocketType = Socket<ListenEvents, EmitEvents>;

@@ -1,8 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { GameDataType, UserID } from '../roomTypes';
+import { EntityDestination, EntityID, GameDataType, GameScores, MessageType, ResourceID, TaskID, TaskType, UserID } from '../roomTypes';
 
 const initialState: GameDataType = {
     players: {},
+    scores: {
+        team: 0
+    },
     messages: [],
     roles: {},
     entities: {},
@@ -22,13 +25,40 @@ export const gameSlice = createSlice({
         },
         LOADED_GAME_DATA_GAME: (state, action: PayloadAction<UserID>) => {
             if (state.players[action.payload]) state.players[action.payload].state = "loaded";
-        }
+        },
+        UPDATE_ENTITY_DEST: (state, action: PayloadAction<{id: EntityID, destination: EntityDestination}>) => {
+            if (state.entities[action.payload.id]) state.entities[action.payload.id].destination = action.payload.destination;
+        },
+        NEW_TASKS: (state, action: PayloadAction<{[id: TaskID]: TaskType}>) => {
+            state.tasks = {
+                ...state.tasks,
+                ...action.payload
+            }
+        },
+        UPDATE_TASK_RESOURCES: (state, action: PayloadAction<{id: TaskID, resources: ResourceID[][]}>) => {
+            if (state.tasks[action.payload.id]) state.tasks[action.payload.id].resources = action.payload.resources;
+        },
+        COMPLETED_TASK: (state, action: PayloadAction<TaskID>) => {
+            delete state.tasks[action.payload];
+        },
+        SCORES: (state, action: PayloadAction<GameScores>) => {
+            state.scores = action.payload;
+        },
+        NEW_MESSAGE: (state, action: PayloadAction<MessageType>) => {
+            state.messages.push(action.payload);
+        },
     },
 });
 
 export const {
     STAGED_GAME,
-    LOADED_GAME_DATA_GAME
+    LOADED_GAME_DATA_GAME,
+    UPDATE_ENTITY_DEST,
+    NEW_TASKS,
+    UPDATE_TASK_RESOURCES,
+    COMPLETED_TASK,
+    SCORES,
+    NEW_MESSAGE
 } = gameSlice.actions;
 
 const GameReducer = gameSlice.reducer;

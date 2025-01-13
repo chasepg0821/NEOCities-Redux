@@ -9,8 +9,6 @@ export const assignRole = (socket: AppSocketType, role: RoleID, user: UserID) =>
     // room exists and the request is from the admin
     if (room && room.getAdmin().id === socket.data.uid) {
         room.assignRole(role, user);
-        socket.emit("assignedRole", role, user);
-        socket.broadcast.in(socket.data.room).emit("assignedRole", role, user);
     // room exists, but request is not from the admin
     } else if (room) {
         socket.emit("permError", "You are not the admin of the room.");

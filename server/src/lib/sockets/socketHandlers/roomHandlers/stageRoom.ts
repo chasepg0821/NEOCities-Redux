@@ -15,16 +15,13 @@ export const stageGame = (socket: AppSocketType) => {
         return;
     }
 
-    // TODO: uncomment when basic dev is done
-    // let allRolesAssigned = true;
-    // forEach(room.getRoleAssignments(), (user, _) => {if(user === "") allRolesAssigned = false});
+    let allRolesAssigned = true;
+    forEach(room.getRoleAssignments(), (user, _) => {if(user === "") allRolesAssigned = false});
 
-    // if (!allRolesAssigned) {
-    //     socket.emit("reqError", "Not all roles are assigned.");
-    //     return;
-    // }
+    if (!allRolesAssigned) {
+        socket.emit("reqError", "Not all roles are assigned.");
+        return;
+    }
 
     room.stageGame();
-    socket.emit("stagedGame", socket.data.room);
-    socket.broadcast.in(socket.data.room).emit("stagedGame", socket.data.room);
 };

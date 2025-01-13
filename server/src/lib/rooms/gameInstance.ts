@@ -1,5 +1,7 @@
+import { AppServerType, getSocketServer } from "../sockets";
 import { RoomInstance } from "./roomInstance";
 import {
+    EntityID,
     EntityType,
     GameDataType,
     PlayerState,
@@ -17,6 +19,7 @@ interface StagedTask {
 }
 
 export class GameInstance {
+    private io: AppServerType = getSocketServer();
     private room: RoomInstance;
     private gameData: GameDataType;
     private taskStack: StagedTask[] = [];
@@ -26,40 +29,36 @@ export class GameInstance {
     private gameTime: number = 0;
     private secondInterval: NodeJS.Timeout | undefined = undefined; // Game logic that needs to run every
     private tickInterval: NodeJS.Timeout | undefined = undefined; // Game logic that needs to run every tick (i.e. entity movement, resource checking and points)
-    private onStage: () => void;
-    private onStart: () => void;
-    private onEnd: () => void;
 
     constructor(
         room: RoomInstance,
-        onStage: () => void,
-        onStart: () => void,
-        onEnd: () => void
     ) {
-        this.onStage = onStage;
-        this.onStart = onStart;
-        this.onEnd = onEnd;
         this.room = room;
         this.gameData = this.generateGameData(room.getSetup());
     }
 
-    private getNewTasks(gameTime: number): {[id: TaskID]: TaskType} {
-        const newTasks: {[id: TaskID]: TaskType} = {};
-    
+    private getNewTasks(gameTime: number): { [id: TaskID]: TaskType } | undefined {
+        const newTasks: { [id: TaskID]: TaskType } = {};
+        let addedNew = false;
+
         while (
             this.taskStack.length > 0 &&
             this.taskStack[this.taskStack.length - 1].start === gameTime
         ) {
+            addedNew = true;
             let newTaskID = this.taskStack.pop()!.id;
             newTasks[newTaskID] = this.room.getTask(newTaskID);
         }
 
-        return cloneDeep(newTasks);
+        return addedNew ? cloneDeep(newTasks) : undefined;
     }
 
     private generateGameData(roomSetup: RoomSetupType) {
         const gD: GameDataType = {
             players: {},
+            scores: {
+                team: 0,
+            },
             messages: [],
             roles: cloneDeep(roomSetup.roles),
             entities: {},
@@ -72,6 +71,7 @@ export class GameInstance {
                 role: parseInt(role),
                 state: "waiting"
             };
+            gD.scores[user] = 0;
         });
 
         // generate entities
@@ -97,9 +97,8 @@ export class GameInstance {
             });
         });
         this.taskStack = sortBy(this.taskStack, ["start"]);
-        gD.tasks = this.getNewTasks(0);
+        gD.tasks = this.getNewTasks(0) || {};
 
-        this.onStage();
         return gD;
     }
 
@@ -115,6 +114,23 @@ export class GameInstance {
         return this.gameData.entities;
     }
 
+    public sendResource(entity: EntityID, task: TaskID): void {
+        const [role, resource] = entity.split("_");
+        const newDestination = task === 0 ? {
+            name: "Base",
+            // TODO: generate steps from the navmesh
+            steps: [this.gameData.roles[parseInt(role)].base]
+        }
+        : {
+            name: this.room.getTask(task).name,
+            // TODO: generate steps from the navmesh
+            steps: [this.room.getTask(task).location]
+        }
+
+        this.gameData.entities[entity].destination = newDestination;
+        this.io.in(this.room.getID()).emit('updateEntityDestination', entity, newDestination);
+    }
+
     private getTasks(): { [id: TaskID]: TaskType } {
         return this.gameData.tasks;
     }
@@ -128,17 +144,21 @@ export class GameInstance {
     }
 
     private addNewTasks(gameTime: number): void {
-        this.gameData.tasks = {
-            ...this.gameData.tasks,
-            ...this.getNewTasks(gameTime)
-        }
+        const newTasks = this.getNewTasks(gameTime);
 
-        // TODO: notify clients of new tasks
+        if (newTasks) {
+            this.gameData.tasks = {
+                ...this.gameData.tasks,
+                ...newTasks
+            }
+            this.io.in(this.room.getID()).emit("newTasks", newTasks);
+        }
     }
 
     private runSecondInterval(): void {
         this.secondInterval = setInterval(() => {
             this.gameTime += 1;
+            if (this.gameTime === this.room.getGameDuration()) this.end();
             this.addNewTasks(this.gameTime);
         }, 1000);
     }
@@ -168,7 +188,7 @@ export class GameInstance {
             entity.location = steps.pop()!;
         }
 
-        // entity did not reach their destination, must move towrds their next step as much as possible
+        // entity did not reach their destination, must move towards their next step as much as possible
         if (steps.length > 0) {
             const ratio = distLeft / distance;
             entity.location = {
@@ -201,17 +221,17 @@ export class GameInstance {
                     // last resource needed
                     if (resourceIndex > -1 && task.resources[0].length === 1 && task.resources.length === 1) {
                         this.removeTask(parseInt(tid));
-                        // TODO: add score and tell users of the completed task
-                    // last resource needed for this phase
+                        this.io.in(this.room.getID()).emit("completedTask", parseInt(tid));
+                        // last resource needed for this phase
                     } else if (resourceIndex > -1 && task.resources[0].length === 1) {
                         task.resources.splice(0, 1);
-                        // TODO: add score and resend resources to clients for the task
-                    // resource needed
+                        this.io.in(this.room.getID()).emit("updateTaskResources", parseInt(tid), task.resources);
+                        // resource needed
                     } else if (resourceIndex > -1) {
                         task.resources[0].splice(resourceIndex, 1);
-                        // TODO: add score and resend resources to clients for the task
+                        this.io.in(this.room.getID()).emit("updateTaskResources", parseInt(tid), task.resources);
                     }
-                    
+
                 }
             });
         });
@@ -227,7 +247,7 @@ export class GameInstance {
     public start(): void {
         this.runSecondInterval();
         this.runTickInterval();
-        this.onStart();
+        this.io.in(this.room.getID()).emit("startedGame");
     }
 
     public pause(): void {
@@ -240,6 +260,5 @@ export class GameInstance {
         clearInterval(this.secondInterval);
         clearInterval(this.tickInterval);
         // TODO: check conditions, save scores, gracefully close game
-        this.onEnd();
     }
 }

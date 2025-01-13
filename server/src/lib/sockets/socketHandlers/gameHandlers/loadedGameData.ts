@@ -13,4 +13,5 @@ export const loadedGameData = (socket: AppSocketType) => {
     if (room.getGame()?.isPlayer(socket.data.uid)) room.getGame()?.setPlayerState(socket.data.uid, "loaded");
 
     socket.emit("loadedGameData", socket.data.uid);
+    socket.broadcast.emit("loadedGameData", socket.data.uid);
 }
