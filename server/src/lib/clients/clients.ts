@@ -32,10 +32,7 @@ export class ClientManager {
 }
 
 export const initClients = () => {
-    if (!clients) {
-        clients = new ClientManager();
-        console.log("Initialized Clients...");
-    }
+    if (!clients) clients = new ClientManager();
 }
 
 export const getClients = () => {
