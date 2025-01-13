@@ -110,6 +110,16 @@ export class GameInstance {
         this.gameData.players[id].state = state;
     }
 
+    public sendMessage(user: UserID, text: string): void {
+        const newMessage = {
+            user,
+            text,
+            timestamp: Date.now(),
+        }
+        this.gameData.messages.push(newMessage);
+        this.io.in(this.room.getID()).emit("newMessage", newMessage);
+    }
+
     private getEntities(): { [id: string]: EntityType } {
         return this.gameData.entities;
     }
