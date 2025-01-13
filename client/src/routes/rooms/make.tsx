@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useAppDispatch, useAppSelector } from '../../lib/util/store/hooks'
-import { MVPRoom } from '../../lib/MVPConstants/defaultRoom'
 import { JOINED_ROOM } from '../../lib/util/store/slices/roomSlice'
+import { MVPRoom } from '../../lib/assets/MVPConstants/defaultRoom'
 
 export const Route = createFileRoute('/rooms/make')({
   component: RouteComponent,

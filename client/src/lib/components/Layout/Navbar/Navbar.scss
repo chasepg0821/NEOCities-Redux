@@ -1,0 +1,46 @@
+@use "/src/styles/colors" as colors;
+
+.top-nav {
+    height: 64px;
+    width: 100vw;
+    padding: 1em .5em;
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+    background-color: colors.$primary-color;
+    color: colors.$text-color-light;
+    box-shadow: 0 5px 5px #1e1e1e40;
+
+    .title {
+        font-size: 2em;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: center;
+        align-items: center;
+
+        .logo {
+            height: 1em;
+            margin-right: .25em;
+            path {
+                fill: #fff;
+                stroke: #fff;
+            }
+            .st0{
+                fill-rule: evenodd;
+                clip-rule: evenodd;
+            }
+        }
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    
+}
+
+
+
