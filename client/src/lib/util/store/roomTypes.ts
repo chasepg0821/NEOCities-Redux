@@ -81,8 +81,14 @@ export interface LobbyDataType {
     }
 }
 
+export enum RoomStateEnum {
+    lobby,
+    stage,
+    play
+}
 export interface RoomDataType {
     id: string
+    state: RoomStateEnum
     admin: {
         id: UserID;
         name: string;
@@ -102,9 +108,10 @@ export interface MessageType {
 export type EntityID = string; // "{RoleID}_{ResourceID}"
 export interface EntityType {
     speed: number;
+    state: "Idle" | "Moving";
     location: PointType;
     destination: {
-        name: string; // task name or base
+        name: string;
         steps: PointType[];
     }
 }
