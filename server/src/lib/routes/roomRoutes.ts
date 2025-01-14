@@ -26,7 +26,6 @@ RoomRouter.post("/make", (req: Request, res: Response) => {
     let roomID = nanoid();
     while (rooms.hasRoom(roomID)) roomID = nanoid();
 
-    // TODO: check if the user is in another room, leave room, notify others
     // add the client
     clients.add(req.body.user.id, {
         name: req.body.user.name,

@@ -1,0 +1,28 @@
+@use "/src/styles/colors" as colors;
+
+.role-assignment-container {
+    min-width: 500px;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    border: 1px colors.$text-color-muted solid;
+    border-radius: 1em;
+    overflow: hidden;
+    padding-bottom: 1em;
+
+    h3 {
+        width: 100%;
+        padding: .5em;
+        margin: 0;
+        color: colors.$text-color-light;
+        background-color: colors.$primary-color;
+        text-align: center;
+    }
+
+    select {
+        padding: .5em;
+        border-radius: .5em;
+        border-color: colors.$text-color-dark;
+    }
+}
