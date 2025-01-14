@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../lib/util/store/hooks'
 import { JOINED_ROOM } from '../../lib/util/store/slices/roomSlice'
 import { RoomInfoType } from '../../lib/util/store/roomTypes'
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/rooms/')({
         }
         return res.json()
       })
-      .then((data) => ({ rooms: data.rooms }))
+      .then((data) => data.rooms)
       .catch((e) => {
         console.log(e)
       })
@@ -24,6 +24,8 @@ export const Route = createFileRoute('/rooms/')({
     }
   }
 })
+
+
 
 function RouteComponent() {
   const { rooms } = Route.useLoaderData();
@@ -63,7 +65,7 @@ function RouteComponent() {
   }
 
   const renderRooms = () => {
-    if (rooms) return rooms.rooms.map((roomInfo: RoomInfoType) => {
+    return rooms.map((roomInfo: RoomInfoType) => {
       return (
         <div>
           <h3>{roomInfo.id}</h3>
@@ -76,7 +78,7 @@ function RouteComponent() {
 
   return (
     <div>
-      {renderRooms()}
+      {rooms && renderRooms()}
     </div>
   )
 }
