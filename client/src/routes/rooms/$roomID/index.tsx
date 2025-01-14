@@ -4,6 +4,7 @@ import { map } from "lodash";
 import { ChangeEvent } from "react";
 import { useSocketContext } from "../../../lib/util/socket/SocketProvider";
 import { RoleID } from "../../../lib/util/store/roomTypes";
+import UserList from "@/lib/components/lobby/UserList/UserList";
 
 export const Route = createFileRoute("/rooms/$roomID/")({
     component: RouteComponent
@@ -26,18 +27,6 @@ function RouteComponent() {
     ) => {
         e.preventDefault();
         socket.sendEvent("assignRole", rid, e.target.value);
-    };
-
-    const renderUserList = () => {
-        return (
-            <ul>
-                {map(users, (user, _) => (
-                    <li>
-                        {user.name} | {user.latency}ms
-                    </li>
-                ))}
-            </ul>
-        );
     };
 
     const renderAssignments = () => {
@@ -67,7 +56,7 @@ function RouteComponent() {
         <>
             <h1>Lobby</h1>
             <h2>{roomID}</h2>
-            {renderUserList()}
+            <UserList />
             {renderAssignments()}
             <button onClick={() => nav({ to: "/" })}>Home</button>
             <button onClick={() => socket.sendEvent("stageGame")}>

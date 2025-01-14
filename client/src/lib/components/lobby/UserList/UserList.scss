@@ -1,0 +1,32 @@
+@use "/src/styles/colors" as colors;
+
+.user-list {
+    min-width: 500px;
+    list-style-type: none;
+    margin: 0;
+    padding: 1em;
+    border: 1px colors.$text-color-muted solid;
+    border-radius: 1em;
+
+    li {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px colors.$text-color-muted dotted;
+
+        .user-latency {
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: center;
+            align-items: center;
+            gap: .5em;
+
+            .indicator {
+                height: .5em;
+                width: .5em;
+                border-radius: .5em;
+            }
+        }
+    }
+}
