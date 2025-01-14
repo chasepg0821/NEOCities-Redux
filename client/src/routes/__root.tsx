@@ -17,7 +17,6 @@ function RootComponent() {
           <Outlet />
         </Layout>
       </StoreProvider>
-      <TanStackRouterDevtools position="bottom-left" />
     </>
   )
 }

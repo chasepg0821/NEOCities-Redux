@@ -4,9 +4,23 @@
     position: relative;
     display: flex;
     flex-flow: column nowrap;
+    overflow-y: auto;
+    overflow-x: hidden;
 
-    main {
-        min-height: calc(100vh - 64px);
-        padding-top: 10px;
+    .content {
+        min-height: calc(100vh - 4rem);
+        width: 100%;
+        display: flex;
+        flex-flow: column nowrap;
+
+        main {
+            min-height: calc(100vh - 64px);
+            width: 100%;
+            padding-top: 10px;
+            display: flex;
+            flex-flow: column nowrap;
+        }
+
     }
+    
 }

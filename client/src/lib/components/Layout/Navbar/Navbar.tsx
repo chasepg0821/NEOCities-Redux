@@ -20,6 +20,8 @@ const Navbar = (props: Props) => {
       </div>
       <div className="options">
         <div>{room === "" ? "--" : room} | {name}</div>
+        <button className="nav-button" onClick={() => nav({ to: "/rooms" })}>Browse Rooms</button>
+        <button className="nav-button action" onClick={() => nav({ to: "/rooms/make" })}>Make a Room</button>
       </div>
     </nav>
   )
