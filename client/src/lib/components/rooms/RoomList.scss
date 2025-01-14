@@ -1,0 +1,72 @@
+@use "/src/styles/colors" as colors;
+
+.room-list {
+    width: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    gap: .5em;
+
+    .room-card {
+        width: 100%;
+        border-radius: 1em;
+        border: 1px colors.$text-color-muted solid;
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: flex-start;
+        align-items: center;
+        overflow: hidden;
+
+        .card-title {
+            width: 100%;
+            padding: 1em;
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: space-between;
+            align-items: center;
+            color: colors.$text-color-light;
+            background-color: colors.$primary-color;
+
+            .id {
+                margin: 0;
+            }
+
+            .join-button {
+                padding: 1em;
+                color: colors.$text-color-light;
+                border: none;
+                border-radius: .5em;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                cursor: pointer;
+                background-color: colors.$accent-color;
+                border: colors.$text-color-light 1px solid;
+
+                &:hover {
+                    background-color: colors.$accent-color-light;
+                }
+            }
+
+            
+        }
+
+        .card-body {
+            width: 100%;
+            padding: 1em;
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-actions {
+            width: 100%;
+            padding: 1em;
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: flex-end;
+            align-items: center;
+        }
+    }
+}

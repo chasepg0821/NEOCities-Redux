@@ -66,10 +66,10 @@
             }
 
             &.action {
-                background-color: colors.$accent-color-dark;
+                background-color: colors.$accent-color;
 
                 &:hover {
-                    background-color: colors.$accent-color;
+                    background-color: colors.$accent-color-light;
                 }
             }
         }

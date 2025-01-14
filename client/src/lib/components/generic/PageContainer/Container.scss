@@ -1,0 +1,27 @@
+.container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: center;
+
+    .contained-content {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: flex-start;
+        align-items: center;
+
+        &.l {
+            max-width: 1280px;
+        }
+
+        &.xl {
+            max-width: 1440px;
+        }
+
+    }
+
+}
