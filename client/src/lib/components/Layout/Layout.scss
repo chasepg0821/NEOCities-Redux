@@ -1,5 +1,4 @@
 .layout-container {
-    height: 100vh;
     width: 100vw;
     position: relative;
     display: flex;
@@ -8,15 +7,18 @@
     overflow-x: hidden;
 
     .content {
-        min-height: calc(100vh - 4em);
+        // height of the window minus the navbar
+        height: calc(100vh - 4em);
         width: 100%;
         display: flex;
         flex-flow: column nowrap;
+        overflow-y: scroll;
 
+        // always take up the screen
         main {
-            min-height: calc(100vh - 64px);
+            min-height: calc(100vh - 4em);
             width: 100%;
-            padding: 1em;
+            padding: .5em;
             display: flex;
             flex-flow: column nowrap;
             justify-content: flex-start;

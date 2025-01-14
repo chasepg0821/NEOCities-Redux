@@ -28,31 +28,33 @@ const RoleAssignment = (props: Props) => {
     return (
         <div className="role-assignment-container">
             <h3>Roles</h3>
-            {map(roleAssignments, (assigned, rid) => {
-                return (
-                    <div>
-                        <label
-                            htmlFor={rid}
-                            style={{ color: roles[parseInt(rid)].color }}>
-                            {roles[parseInt(rid)].name}
-                        </label>
-                        <select
-                            name={rid}
-                            id={rid}
-                            value={assigned}
-                            disabled={user !== admin}
-                            onChange={(e) =>
-                                handleAssignRole(e, parseInt(rid))
-                            }>
-                            <option value="">None</option>
-                            {map(users, (user, uid) => (
-                                <option value={uid}>{user.name}</option>
-                            ))}
-                        </select>
-                        <br />
-                    </div>
-                );
-            })}
+            <div className="role-assignment-content">
+                {map(roleAssignments, (assigned, rid) => {
+                    return (
+                        <div className="selector-pair">
+                            <label
+                                htmlFor={rid}
+                                style={{ color: roles[parseInt(rid)].color }}>
+                                {roles[parseInt(rid)].name}
+                            </label>
+                            <select
+                                name={rid}
+                                id={rid}
+                                value={assigned}
+                                disabled={user !== admin}
+                                onChange={(e) =>
+                                    handleAssignRole(e, parseInt(rid))
+                                }>
+                                <option value="">None</option>
+                                {map(users, (user, uid) => (
+                                    <option value={uid}>{user.name}</option>
+                                ))}
+                            </select>
+                            <br />
+                        </div>
+                    );
+                })}
+            </div>
         </div>
     );
 };

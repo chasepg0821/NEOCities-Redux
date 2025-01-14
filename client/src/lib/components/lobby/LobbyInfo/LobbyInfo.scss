@@ -7,24 +7,23 @@
     justify-content: flex-start;
     align-items: center;
     border: 1px colors.$text-color-muted solid;
-    border-radius: 1em;
+    border-radius: .5em;
     overflow: hidden;
-    padding-bottom: 1em;
 
     h3 {
         width: 100%;
         padding: .5em;
         margin: 0;
         color: colors.$text-color-light;
-        background-color: colors.$primary-color;
-        text-align: center;
+        background-color: colors.$primary-color-dark;
+        text-align: left;
     }
 
     .info-list {
         width: 100%;
         list-style-type: none;
         margin: 0;
-        padding: 0 1em;
+        padding: .5em;
     
         li {
             display: flex;

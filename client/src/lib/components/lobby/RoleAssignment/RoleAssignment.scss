@@ -7,22 +7,43 @@
     justify-content: flex-start;
     align-items: center;
     border: 1px colors.$text-color-muted solid;
-    border-radius: 1em;
+    border-radius: .5em;
     overflow: hidden;
-    padding-bottom: 1em;
 
     h3 {
         width: 100%;
         padding: .5em;
         margin: 0;
         color: colors.$text-color-light;
-        background-color: colors.$primary-color;
-        text-align: center;
+        background-color: colors.$primary-color-dark;
+        text-align: left;
     }
 
-    select {
+    .role-assignment-content {
+        display: flex;
+        flex-flow: row wrap;
         padding: .5em;
-        border-radius: .5em;
-        border-color: colors.$text-color-dark;
+        gap: .5em;
+
+        .selector-pair {
+            min-width: 150px;
+            flex-grow: 1;
+            display: flex;
+            flex-flow: column nowrap;
+
+
+            select {
+                width: 100%;
+                padding: .5em;
+                border-radius: .5em;
+                color: colors.$primary-color-dark;
+                border: 1px colors.$primary-color-dark solid;
+                background-color: transparent;
+
+                &:disabled {
+                    background-color: lightgrey;
+                }
+            }
+        }
     }
 }

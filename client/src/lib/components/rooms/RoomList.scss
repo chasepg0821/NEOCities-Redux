@@ -9,7 +9,7 @@
 
     .room-card {
         width: 100%;
-        border-radius: 1em;
+        border-radius: .5em;
         border: 1px colors.$text-color-muted solid;
         display: flex;
         flex-flow: column nowrap;
@@ -19,20 +19,20 @@
 
         .card-title {
             width: 100%;
-            padding: 1em;
+            padding: .5em;
             display: flex;
             flex-flow: row nowrap;
             justify-content: space-between;
             align-items: center;
             color: colors.$text-color-light;
-            background-color: colors.$primary-color;
+            background-color: colors.$primary-color-dark;
 
             .id {
                 margin: 0;
             }
 
             .join-button {
-                padding: 1em;
+                padding: .5em;
                 color: colors.$text-color-light;
                 border: none;
                 border-radius: .5em;
@@ -44,7 +44,8 @@
                 border: colors.$text-color-light 1px solid;
 
                 &:hover {
-                    background-color: colors.$accent-color-light;
+                    background-color: colors.$accent-color-dark;
+                    box-shadow: inset 0 5px 5px #1e1e1e40;
                 }
             }
 
@@ -53,7 +54,7 @@
 
         .card-body {
             width: 100%;
-            padding: 1em;
+            padding: .5em;
             display: flex;
             flex-flow: row nowrap;
             justify-content: center;
@@ -62,7 +63,7 @@
 
         .card-actions {
             width: 100%;
-            padding: 1em;
+            padding: .5em;
             display: flex;
             flex-flow: row nowrap;
             justify-content: flex-end;
