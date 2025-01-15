@@ -29,27 +29,7 @@
 
             .id {
                 margin: 0;
-            }
-
-            .join-button {
-                padding: .5em;
-                color: colors.$text-color-light;
-                border: none;
-                border-radius: .5em;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                cursor: pointer;
-                background-color: colors.$accent-color;
-                border: colors.$text-color-light 1px solid;
-
-                &:hover {
-                    background-color: colors.$accent-color-dark;
-                    box-shadow: inset 0 5px 5px #1e1e1e40;
-                }
-            }
-
-            
+            }            
         }
 
         .card-body {

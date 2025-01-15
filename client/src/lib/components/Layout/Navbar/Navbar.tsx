@@ -1,30 +1,42 @@
 import Logo from "@/lib/assets/images/Logo";
-import { useAppSelector } from "../../../util/store/hooks"
+import { useAppSelector } from "../../../util/store/hooks";
 
-import "./Navbar.scss"
+import "./Navbar.scss";
 import { useNavigate } from "@tanstack/react-router";
+import { MdConstruction, MdSearch } from "react-icons/md";
 
-
-type Props = {}
+type Props = {};
 
 const Navbar = (props: Props) => {
-  const name = useAppSelector((state) => state.auth.name);
-  const room = useAppSelector((state) => state.room.id);
-  const nav = useNavigate();
+    const name = useAppSelector((state) => state.auth.name);
+    const room = useAppSelector((state) => state.room.id);
+    const nav = useNavigate();
 
-  return (
-    <nav className="top-nav">
-      <div className="title" onClick={() => nav({ to: "/" })}>
-        <Logo />
-        <strong>NEO</strong>Cities
-      </div>
-      <div className="options">
-        <div>{room === "" ? "--" : room} | {name}</div>
-        <button className="nav-button" onClick={() => nav({ to: "/rooms" })}>Browse Rooms</button>
-        <button className="nav-button action" onClick={() => nav({ to: "/rooms/make" })}>Make a Room</button>
-      </div>
-    </nav>
-  )
-}
+    return (
+        <nav className="top-nav">
+            <div className="title" onClick={() => nav({ to: "/" })}>
+                <Logo />
+                <strong>NEO</strong>Cities
+            </div>
+            <div className="options">
+                <div>
+                    {room === "" ? "--" : room} | {name}
+                </div>
+                <button
+                    className="alternate"
+                    onClick={() => nav({ to: "/rooms" })}>
+                    <MdSearch />
+                    <span>Browse Rooms</span>
+                </button>
+                <button
+                    className="action"
+                    onClick={() => nav({ to: "/rooms/make" })}>
+                      <MdConstruction />
+                    <span>Make a Room</span>
+                </button>
+            </div>
+        </nav>
+    );
+};
 
-export default Navbar
+export default Navbar;

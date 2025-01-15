@@ -5,13 +5,17 @@ import Container from "@/lib/components/generic/Container/Container";
 import LobbyInfo from "@/lib/components/lobby/LobbyInfo/LobbyInfo";
 import RoleAssignment from "@/lib/components/lobby/RoleAssignment/RoleAssignment";
 
-import "@lib/components/lobby/lobby.scss"
+import "@lib/components/lobby/lobby.scss";
+import { MdCloudDone, MdLogout } from "react-icons/md";
+import { useAppSelector } from "@/lib/util/store/hooks";
 
 export const Route = createFileRoute("/rooms/$roomID/")({
     component: RouteComponent
 });
 
 function RouteComponent() {
+    const user = useAppSelector((state) => state.auth.id);
+    const admin = useAppSelector((state) => state.room.admin.id);
     const nav = useNavigate();
     const socket = useSocketContext();
 
@@ -26,14 +30,17 @@ function RouteComponent() {
                             socket.sendEvent("leaveRoom");
                             nav({ to: "/rooms" });
                         }}>
-                        Leave Room
+                        <MdLogout />
+                        <span>Leave Room</span>
                     </button>
-                    <button
-                        className="stage"
-                        onClick={() => socket.sendEvent("stageGame")}
-                    >
-                        Stage Game
-                    </button>
+                    {user === admin && (
+                        <button
+                            className="action"
+                            onClick={() => socket.sendEvent("stageGame")}>
+                            <MdCloudDone />
+                            <span>Stage Game</span>
+                        </button>
+                    )}
                 </div>
             </div>
             <div className="lobby-details">
@@ -45,8 +52,6 @@ function RouteComponent() {
                     <RoleAssignment />
                 </div>
             </div>
-            
-            
         </Container>
     );
 }

@@ -1,4 +1,4 @@
-@use 'colors';
+@use "colors";
 
 *,
 *::before,
@@ -10,25 +10,73 @@
 html {
     font-size: 16px;
 }
-  
+
 body {
     margin: 0;
     padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+        "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+        "Helvetica Neue", sans-serif;
     line-height: 1.6;
     background-color: colors.$text-color-light;
     color: colors.$text-color-dark;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     margin: 1rem 0;
     font-weight: 600;
 }
-  
+
 p {
     margin: 0 0 1rem 0;
 }
 
 hr {
     color: inherit;
+}
+
+button {
+    display: flex;
+    flex-flow: row nowrap;
+    gap: .25em;
+    height: calc(2em + 2px);
+    font-size: 1em;
+    padding: 0.5em;
+    background-color: transparent;
+    color: colors.$primary-color-dark;
+    border: colors.$primary-color-dark 1px solid;
+    border-radius: 0.5em;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+        background-color: colors.$primary-color-lighter;
+        box-shadow: inset 0 5px 5px #1e1e1e40;
+    }
+
+    &.alternate {
+        color: colors.$text-color-light;
+        border: colors.$text-color-light 1px solid;
+
+        &:hover {
+            background-color: colors.$primary-color-dark;
+            box-shadow: inset 0 5px 5px #1e1e1e40;
+        }
+    }
+
+    &.action {
+        color: colors.$text-color-light;
+        background-color: colors.$accent-color;
+        border: colors.$text-color-light 1px solid;
+
+        &:hover {
+            background-color: colors.$accent-color-dark;
+            box-shadow: inset 0 5px 5px #1e1e1e40;
+        }
+    }
 }

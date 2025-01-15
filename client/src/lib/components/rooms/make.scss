@@ -1,10 +1,9 @@
-@use "/src/styles/colors" as colors;
-
-.lobby-title {
+.make-room-title {
     width: 100%;
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
+    align-items: center;
 
     .controls {
         display: flex;
@@ -15,22 +14,9 @@
     }
 }
 
-.lobby-details {
+.make-details {
     width: 100%;
     display: flex;
     flex-flow: row wrap;
     gap: .5em;
-
-    .left {
-        flex-grow: 1;
-        display: flex;
-        flex-flow: column nowrap;
-    }
-
-    .right {
-        flex-grow: 1;
-        display: flex;
-        flex-flow: column nowrap;
-        gap: .5em;
-    }
 }

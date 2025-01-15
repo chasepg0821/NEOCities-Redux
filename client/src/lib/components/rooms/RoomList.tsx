@@ -17,7 +17,7 @@ const RoomCard = ({room, onJoin}: RoomCardProps): React.ReactNode => {
         <div className="room-card">
             <div className='card-title'>
                 <h3 className="id">{room.id}</h3>
-                <button className="join-button" onClick={onJoin}>Join Room</button>
+                <button className="action" onClick={onJoin}>Join Room</button>
             </div>
             <div className='card-body'>
                 {room.admin.name} | {room.numUsers}
