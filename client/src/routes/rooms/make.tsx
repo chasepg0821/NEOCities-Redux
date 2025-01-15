@@ -59,9 +59,15 @@ function RouteComponent() {
                 </div>
             </div>
             <div className="make-details">
-                Eventually this will be where the admin will make changes to the
-                rules of the room and game. However for the MVP just click the
-                button to make a new room using the default configuration.
+                <p>
+                    Eventually this will be where the admin will make changes to the
+                    rules of the room and game. However for the MVP just click the
+                    button to make a new room using the default configuration.
+                </p>
+                <pre>
+                    {JSON.stringify(MVPRoom, null, 4)}
+                </pre>
+
             </div>
         </Container>
     );

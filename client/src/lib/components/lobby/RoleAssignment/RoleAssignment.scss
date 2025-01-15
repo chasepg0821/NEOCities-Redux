@@ -35,15 +35,6 @@
 
             select {
                 width: 100%;
-                padding: .5em;
-                border-radius: .5em;
-                color: colors.$primary-color-dark;
-                border: 1px colors.$primary-color-dark solid;
-                background-color: transparent;
-
-                &:disabled {
-                    background-color: lightgrey;
-                }
             }
         }
     }

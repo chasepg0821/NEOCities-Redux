@@ -19,4 +19,13 @@
     display: flex;
     flex-flow: row wrap;
     gap: .5em;
+
+    p {
+        width: 100%;
+        word-wrap: break-word;
+    }
+
+    pre {
+        line-height: 1;
+    }
 }

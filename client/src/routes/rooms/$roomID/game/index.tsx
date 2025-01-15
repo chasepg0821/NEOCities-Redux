@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useGameContext } from "../../../../lib/components/game/GameProvider";
 import { useAppSelector } from "../../../../lib/util/store/hooks";
+import RoleInfo from "@/lib/components/game/stage/RoleInfo/RoleInfo";
 
 export const Route = createFileRoute("/rooms/$roomID/game/")({
     component: RouteComponent
@@ -22,17 +23,7 @@ function RouteComponent() {
     return (
         <>
             <h1>Stage</h1>
-            <p>
-                {!loading && (
-                    <pre style={{ lineHeight: 1 }}>
-                        {JSON.stringify(
-                            GameContext.getGameData((gD) => gD.roles[gD.players[user].role]) || {},
-                            null,
-                            4
-                        )}
-                    </pre>
-                )}
-            </p>
+            <RoleInfo />
             <button onClick={() => nav({ to: "/" })}>Home</button>
         </>
     );

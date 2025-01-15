@@ -12,7 +12,7 @@ const UserList = () => {
             <h3>Users</h3>
             <ul className="user-list">
                 {map(users, (user, _) => (
-                    <li>
+                    <li key={user.name}>
                         <span>{user.name}</span>
                         <div className="user-latency">
                             {user.latency}ms

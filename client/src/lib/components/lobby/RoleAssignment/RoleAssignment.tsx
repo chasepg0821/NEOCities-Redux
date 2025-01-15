@@ -31,7 +31,7 @@ const RoleAssignment = (props: Props) => {
             <div className="role-assignment-content">
                 {map(roleAssignments, (assigned, rid) => {
                     return (
-                        <div className="selector-pair">
+                        <div className="selector-pair" key={rid+assigned}>
                             <label
                                 htmlFor={rid}
                                 style={{ color: roles[parseInt(rid)].color }}>
@@ -47,7 +47,7 @@ const RoleAssignment = (props: Props) => {
                                 }>
                                 <option value="">None</option>
                                 {map(users, (user, uid) => (
-                                    <option value={uid}>{user.name}</option>
+                                    <option value={uid} key={rid+uid}>{user.name}</option>
                                 ))}
                             </select>
                             <br />
