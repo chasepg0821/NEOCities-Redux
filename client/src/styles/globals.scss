@@ -52,20 +52,33 @@ button {
     border: colors.$primary-color-dark 1px solid;
     border-radius: 0.5em;
     text-decoration: none;
-    cursor: pointer;
 
-    &:hover {
+    &:hover:not(:disabled) {
         background-color: colors.$primary-color-lighter;
         box-shadow: inset 0 5px 5px #1e1e1e40;
+        cursor: pointer;
+    }
+
+    &:disabled {
+        color: colors.$text-color-muted;
+        border: colors.$text-color-muted 1px solid;
+        background-color: lightgrey;
     }
 
     &.alternate {
         color: colors.$text-color-light;
         border: colors.$text-color-light 1px solid;
 
-        &:hover {
+        &:hover:not(:disabled) {
             background-color: colors.$primary-color-dark;
             box-shadow: inset 0 5px 5px #1e1e1e40;
+            cursor: pointer;
+        }
+
+        &:disabled {
+            color: colors.$text-color-muted;
+            border: colors.$text-color-muted 1px solid;
+            background-color: lightgrey;
         }
     }
 
@@ -74,9 +87,16 @@ button {
         background-color: colors.$accent-color;
         border: colors.$text-color-light 1px solid;
 
-        &:hover {
+        &:hover:not(:disabled) {
             background-color: colors.$accent-color-dark;
             box-shadow: inset 0 5px 5px #1e1e1e40;
+            cursor: pointer;
+        }
+
+        &:disabled {
+            color: colors.$text-color-muted;
+            border: colors.$text-color-muted 1px solid;
+            background-color: lightgrey;
         }
     }
 }

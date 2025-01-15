@@ -1,36 +1,16 @@
 @use "/src/styles/colors" as colors;
 
-.lobby-info-container {
-    min-width: 500px;
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: flex-start;
-    align-items: center;
-    border: 1px colors.$text-color-muted solid;
-    border-radius: .5em;
-    overflow: hidden;
+.info-list {
+    width: 100%;
+    list-style-type: none;
+    margin: 0;
+    padding: .5em;
 
-    h3 {
-        width: 100%;
-        padding: .5em;
-        margin: 0;
-        color: colors.$text-color-light;
-        background-color: colors.$primary-color-dark;
-        text-align: left;
-    }
-
-    .info-list {
-        width: 100%;
-        list-style-type: none;
-        margin: 0;
-        padding: .5em;
-    
-        li {
-            display: flex;
-            flex-flow: row nowrap;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px colors.$text-color-muted dotted;
-        }
+    li {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px colors.$text-color-muted dotted;
     }
 }

@@ -1,6 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useSocketContext } from "../../../lib/util/socket/SocketProvider";
-import UserList from "@/lib/components/lobby/UserList/UserList";
 import Container from "@/lib/components/generic/Container/Container";
 import LobbyInfo from "@/lib/components/lobby/LobbyInfo/LobbyInfo";
 import RoleAssignment from "@/lib/components/lobby/RoleAssignment/RoleAssignment";
@@ -8,6 +7,7 @@ import RoleAssignment from "@/lib/components/lobby/RoleAssignment/RoleAssignment
 import "@lib/components/lobby/lobby.scss";
 import { MdCloudDone, MdLogout } from "react-icons/md";
 import { useAppSelector } from "@/lib/util/store/hooks";
+import UserList from "@/lib/components/lobby/UserList/UserList";
 
 export const Route = createFileRoute("/rooms/$roomID/")({
     component: RouteComponent

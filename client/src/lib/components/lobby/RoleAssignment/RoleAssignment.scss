@@ -1,41 +1,20 @@
 @use "/src/styles/colors" as colors;
 
-.role-assignment-container {
-    min-width: 500px;
+.role-assignment-content {
+    width: 100%;
     display: flex;
-    flex-flow: column nowrap;
-    justify-content: flex-start;
-    align-items: center;
-    border: 1px colors.$text-color-muted solid;
-    border-radius: .5em;
-    overflow: hidden;
+    flex-flow: row wrap;
+    padding: .5em;
+    gap: .5em;
 
-    h3 {
-        width: 100%;
-        padding: .5em;
-        margin: 0;
-        color: colors.$text-color-light;
-        background-color: colors.$primary-color-dark;
-        text-align: left;
-    }
-
-    .role-assignment-content {
-        width: 100%;
+    .selector-pair {
+        min-width: 150px;
+        flex-grow: 1;
         display: flex;
-        flex-flow: row wrap;
-        padding: .5em;
-        gap: .5em;
+        flex-flow: column nowrap;
 
-        .selector-pair {
-            min-width: 150px;
-            flex-grow: 1;
-            display: flex;
-            flex-flow: column nowrap;
-
-
-            select {
-                width: 100%;
-            }
+        select {
+            width: 100%;
         }
     }
 }

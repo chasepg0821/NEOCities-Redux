@@ -5,6 +5,8 @@ import { map } from "lodash";
 import { ChangeEvent } from "react";
 import { RoleID } from "@/lib/util/store/roomTypes";
 import { useSocketContext } from "@/lib/util/socket/SocketProvider";
+import Card from "../../generic/Card/Card";
+import { MdAssignmentInd } from "react-icons/md";
 
 type Props = {};
 
@@ -26,12 +28,14 @@ const RoleAssignment = (props: Props) => {
     };
 
     return (
-        <div className="role-assignment-container">
-            <h3>Roles</h3>
+        <Card
+            title="Roles"
+            icon={<MdAssignmentInd />}
+        >
             <div className="role-assignment-content">
                 {map(roleAssignments, (assigned, rid) => {
                     return (
-                        <div className="selector-pair" key={rid+assigned}>
+                        <div className="selector-pair" key={rid + assigned}>
                             <label
                                 htmlFor={rid}
                                 style={{ color: roles[parseInt(rid)].color }}>
@@ -47,7 +51,7 @@ const RoleAssignment = (props: Props) => {
                                 }>
                                 <option value="">None</option>
                                 {map(users, (user, uid) => (
-                                    <option value={uid} key={rid+uid}>{user.name}</option>
+                                    <option value={uid} key={rid + uid}>{user.name}</option>
                                 ))}
                             </select>
                             <br />
@@ -55,7 +59,8 @@ const RoleAssignment = (props: Props) => {
                     );
                 })}
             </div>
-        </div>
+
+        </Card>
     );
 };
 

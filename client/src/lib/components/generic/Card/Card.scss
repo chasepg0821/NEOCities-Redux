@@ -1,0 +1,39 @@
+@use "/src/styles/colors" as colors;
+
+.custom-card {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    border: 1px colors.$primary-color-dark solid;
+    border-radius: .5em;
+    overflow: hidden;
+
+    .custom-card-title {
+        width: 100%;
+        font-weight: 600;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        padding: .5em;
+        color: colors.$text-color-light;
+        background-color: colors.$primary-color-dark;
+
+        & > div {
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: center;
+            align-items: center;
+            gap: .5em;
+        }
+    }
+
+    .custom-card-body {
+        width: 100%;
+        padding: .5em;
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: flex-start;
+        align-items: center;
+    }
+}
