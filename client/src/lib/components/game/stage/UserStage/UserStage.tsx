@@ -26,7 +26,7 @@ const UserStage = () => {
                                 : user.latency > 100
                                     ? <MdNetworkWifi1Bar color="red" />
                                     : <MdNetworkWifi color="green" />}
-                            <MdDownloading color={user.state === 'loaded' ? "green" : "lightgrey"} />
+                            <MdDownloading color={user.loaded ? "green" : "lightgrey"} />
                         </div>
                     </li>
                 ))}

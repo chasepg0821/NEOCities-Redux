@@ -34,7 +34,7 @@ function RouteComponent() {
     const usersLoaded = useMemo(() => {
         let allLoaded = true;
         forEach(users, (u) => {
-            if (u.state !== "loaded") allLoaded = false;
+            if (!u.loaded) allLoaded = false;
         });
         return allLoaded;
     }, [users]);
@@ -42,7 +42,7 @@ function RouteComponent() {
     const playersReady = useMemo(() => {
         let allReady = true;
         forEach(players, (p) => {
-            if (p.state !== "ready") allReady = false;
+            if (!p.ready) allReady = false;
         });
         return allReady;
     }, [players])
