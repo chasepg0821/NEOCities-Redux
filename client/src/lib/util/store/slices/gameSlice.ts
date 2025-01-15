@@ -23,9 +23,6 @@ export const gameSlice = createSlice({
             state.entities = action.payload.entities;
             state.tasks = action.payload.tasks;
         },
-        LOADED_GAME_DATA_GAME: (state, action: PayloadAction<UserID>) => {
-            if (state.players[action.payload]) state.players[action.payload].state = "loaded";
-        },
         UPDATE_ENTITY_DEST: (state, action: PayloadAction<{id: EntityID, destination: EntityDestination}>) => {
             if (state.entities[action.payload.id]) state.entities[action.payload.id].destination = action.payload.destination;
         },
@@ -52,7 +49,6 @@ export const gameSlice = createSlice({
 
 export const {
     STAGED_GAME,
-    LOADED_GAME_DATA_GAME,
     UPDATE_ENTITY_DEST,
     NEW_TASKS,
     UPDATE_TASK_RESOURCES,

@@ -5,7 +5,7 @@ import { MdDownloadDone, MdPerson } from "react-icons/md";
 import "./PlayerStage.scss";
 import Card from "../../../generic/Card/Card";
 import { useSocketContext } from "@/lib/util/socket/SocketProvider";
-import { useMemo } from "react";
+import { FaChess } from "react-icons/fa";
 
 
 const PlayerStage = () => {
@@ -22,8 +22,8 @@ const PlayerStage = () => {
     return (
         <Card
             title="Players"
-            icon={<MdPerson />}
-            actions={players[user] && users[user].state === "loaded" ? [
+            icon={<FaChess />}
+            actions={players[user] && users[user].loaded ? [
                 <button className="action" onClick={toggleReady} key={"toggle-ready"}>Toggle Ready</button>
             ] : undefined}
         >
@@ -32,7 +32,7 @@ const PlayerStage = () => {
                     <li key={pid}>
                         <span>{users[pid]?.name}</span>
                         <div className="player-info">
-                            <MdDownloadDone color={player.state === 'ready' ? "green" : "lightgrey"} />
+                            <MdDownloadDone color={player.ready ? "green" : "lightgrey"} />
                         </div>
                     </li>
                 ))}
