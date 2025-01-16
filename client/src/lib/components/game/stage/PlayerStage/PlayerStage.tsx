@@ -15,8 +15,7 @@ const PlayerStage = () => {
     const socket = useSocketContext();
 
     const toggleReady = () => {
-        console.log("toggle ready");
-        // socket.sendEvent("toggleReady", user, players[])
+        socket.sendEvent("toggleReady", user);
     }
 
     return (

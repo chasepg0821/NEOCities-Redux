@@ -17,6 +17,7 @@ export interface ListenEvents {
     // Game
     startedGame: () => void;
     loadedGameData: (id: UserID) => void;
+    toggleReady: (id: UserID) => void;
     updateEntityDestination: (id: EntityID, destination: EntityDestination) => void;
     newTasks: (tasks: { [id: TaskID]: TaskType }) =>  void;
     updateTaskResources: (id: TaskID, resources: ResourceID[][]) =>  void;
@@ -36,6 +37,7 @@ export interface EmitEvents {
 
     // Game
     loadedGameData: () => void;
+    toggleReady: (id: UserID) => void;
     sendResource: (entity: EntityID, task: TaskID) => void;
     sendMessage: (text: string) => void;
 }

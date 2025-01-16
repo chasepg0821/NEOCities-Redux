@@ -12,11 +12,10 @@ export interface RoleType {
 }
 
 export type UserID = string;
-export type UserState = "waiting" | "loaded";
 export interface UserType {
     name: string,
     latency: number,
-    state: UserState
+    loaded: boolean
 }
 
 export type ResourceID = number;
@@ -113,10 +112,9 @@ export interface EntityType {
     destination: EntityDestination;
 }
 
-export type PlayerState = UserState | "ready";
 export interface PlayerType {
     role: RoleID;
-    state: PlayerState;
+    ready: boolean;
 }
 
 export interface GameScores {

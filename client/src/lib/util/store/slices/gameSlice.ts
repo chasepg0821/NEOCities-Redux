@@ -44,6 +44,9 @@ export const gameSlice = createSlice({
         NEW_MESSAGE: (state, action: PayloadAction<MessageType>) => {
             state.messages.push(action.payload);
         },
+        TOGGLE_READY: (state, action: PayloadAction<UserID>) => {
+            state.players[action.payload].ready = !state.players[action.payload].ready;
+        }
     },
 });
 
@@ -54,7 +57,8 @@ export const {
     UPDATE_TASK_RESOURCES,
     COMPLETED_TASK,
     SCORES,
-    NEW_MESSAGE
+    NEW_MESSAGE,
+    TOGGLE_READY
 } = gameSlice.actions;
 
 const GameReducer = gameSlice.reducer;

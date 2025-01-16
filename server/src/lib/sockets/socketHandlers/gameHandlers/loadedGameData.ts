@@ -9,8 +9,7 @@ export const loadedGameData = (socket: AppSocketType) => {
         return;
     }
 
-    room.setUserState(socket.data.uid, "loaded");
-    if (room.getGame()?.isPlayer(socket.data.uid)) room.getGame()?.setPlayerState(socket.data.uid, "loaded");
+    room.setUserLoaded(socket.data.uid, true);
 
     socket.emit("loadedGameData", socket.data.uid);
     socket.broadcast.emit("loadedGameData", socket.data.uid);

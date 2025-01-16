@@ -42,7 +42,7 @@ RoomRouter.post("/make", (req: Request, res: Response) => {
             [req.body.user.id] : {
                 name: req.body.user.name,
                 latency: 0,
-                state: "waiting"
+                loaded: false
             }
         },
         roomSetup: req.body.roomSetup
@@ -72,7 +72,7 @@ RoomRouter.post("/join", (req: Request, res: Response) => {
     room!.addUser(req.body.user.id, {
         name: req.body.user.name,
         latency: 0,
-        state: "waiting"
+        loaded: false
     });
 
     console.log(`${req.body.user.id} joined room ${req.body.room}.`);

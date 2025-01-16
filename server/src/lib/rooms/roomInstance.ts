@@ -1,15 +1,27 @@
 import { forEach } from "lodash";
 import { GameInstance } from "./gameInstance";
-import { RoleID, RoomDataType, LobbyDataType, RoomSetupType, UserID, UserType, RoomInfoType, UserState, RoomStateEnum, RoleType, TaskID, TaskType } from "./roomTypes";
+import {
+    RoleID,
+    RoomDataType,
+    LobbyDataType,
+    RoomSetupType,
+    UserID,
+    UserType,
+    RoomInfoType,
+    RoomStateEnum,
+    RoleType,
+    TaskID,
+    TaskType
+} from "./roomTypes";
 import { AppServerType, getSocketServer } from "../sockets";
 
 export class RoomInstance {
     private io: AppServerType = getSocketServer();
     private roomData: RoomDataType;
     private game: GameInstance | undefined;
-    
-    constructor (roomData: RoomDataType) {
-        this.roomData = roomData
+
+    constructor(roomData: RoomDataType) {
+        this.roomData = roomData;
     }
 
     public getID(): string {
@@ -20,7 +32,7 @@ export class RoomInstance {
         return this.roomData.state;
     }
 
-    public getAdmin(): { id: UserID, name: string } {
+    public getAdmin(): { id: UserID; name: string } {
         return this.roomData.admin;
     }
 
@@ -40,20 +52,20 @@ export class RoomInstance {
                 this.io.in(this.getID()).emit("assignedRole", parseInt(r), "");
             }
         });
-        delete this.roomData.users[id]
+        delete this.roomData.users[id];
         this.io.in(this.getID()).emit("userLeft", id);
     }
 
-    public getUsers(): {[id: UserID]: UserType } {
+    public getUsers(): { [id: UserID]: UserType } {
         return this.roomData.users;
     }
 
-    public getUserState(id: UserID): UserState | undefined {
-        return this.roomData.users[id].state;
+    public isUserLoaded(id: UserID): boolean {
+        return this.roomData.users[id].loaded;
     }
 
-    public setUserState(id: UserID, state: UserState): void {
-        this.roomData.users[id].state = state;
+    public setUserLoaded(id: UserID, loaded: boolean): void {
+        this.roomData.users[id].loaded = loaded;
     }
 
     public getRoles(): { [id: RoleID]: RoleType } {
@@ -85,18 +97,18 @@ export class RoomInstance {
         return {
             id: this.getID(),
             admin: this.getAdmin(),
-            numUsers: Object.keys(this.getUsers()).length,
-        }
+            numUsers: Object.keys(this.getUsers()).length
+        };
     }
 
     public getLobbyData(): LobbyDataType {
-        const roles: { [id: RoleID]: { name: string, color: string }} = {};
+        const roles: { [id: RoleID]: { name: string; color: string } } = {};
         forEach(this.roomData.roomSetup.roles, (role, rid) => {
             roles[parseInt(rid)] = {
                 name: role.name,
                 color: role.color
-            }
-        })
+            };
+        });
 
         return {
             id: this.roomData.id,
@@ -104,7 +116,7 @@ export class RoomInstance {
             users: this.getUsers(),
             roles,
             roleAssignments: this.roomData.roomSetup.roleAssignments
-        }
+        };
     }
 
     public getSetup(): RoomSetupType {

@@ -4,7 +4,6 @@ import {
     EntityID,
     EntityType,
     GameDataType,
-    PlayerState,
     PointType,
     RoomSetupType,
     TaskID,
@@ -69,7 +68,7 @@ export class GameInstance {
         forEach(roomSetup.roleAssignments, (user, role) => {
             gD.players[user] = {
                 role: parseInt(role),
-                state: "waiting"
+                ready: false
             };
             gD.scores[user] = 0;
         });
@@ -106,8 +105,9 @@ export class GameInstance {
         return this.gameData.players[id] ? true : false;
     }
 
-    public setPlayerState(id: UserID, state: PlayerState): void {
-        this.gameData.players[id].state = state;
+    public toggleReady(id: UserID): void {
+        this.gameData.players[id].ready = !this.gameData.players[id].ready;
+        this.io.in(this.room.getID()).emit("toggleReady", id);
     }
 
     public sendMessage(user: UserID, text: string): void {

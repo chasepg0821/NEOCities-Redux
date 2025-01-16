@@ -63,7 +63,7 @@ export function initSocketServer(
                 .emit("userJoined", socket.data.uid, {
                     name: clients.getClient(socket.data.uid)?.name || "",
                     latency: 0,
-                    state: room?.getUserState(socket.data.uid) || "waiting",
+                    loaded: room?.isUserLoaded(socket.data.uid) || false
                 });
         }
 
