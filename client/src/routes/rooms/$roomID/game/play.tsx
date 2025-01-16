@@ -1,3 +1,5 @@
+import TaskList from '@/lib/components/game/play/TaskList/TaskList'
+import Container from '@/lib/components/generic/Container/Container'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/rooms/$roomID/game/play')({
@@ -5,5 +7,9 @@ export const Route = createFileRoute('/rooms/$roomID/game/play')({
 })
 
 function RouteComponent() {
-  return <div>Hello "/rooms/$roomID/game/play"!</div>
+  return (
+    <Container bp='l'>
+      <TaskList />
+    </Container>
+  );
 }
