@@ -15,14 +15,14 @@ const PlayerStage = () => {
     const socket = useSocketContext();
 
     const toggleReady = () => {
-        socket.sendEvent("toggleReady", user);
+        socket.sendEvent("toggleReady");
     }
 
     return (
         <Card
             title="Players"
             icon={<FaChess />}
-            actions={players[user] && users[user].loaded ? [
+            actions={players[user] && users[user]?.loaded ? [
                 <button className="action" onClick={toggleReady} key={"toggle-ready"}>Toggle Ready</button>
             ] : undefined}
         >

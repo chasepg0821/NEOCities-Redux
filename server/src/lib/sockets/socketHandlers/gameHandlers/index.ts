@@ -2,6 +2,7 @@ import { AppSocketType } from "../../socketTypes";
 import { loadedGameData } from "./loadedGameData";
 import { sendMessage } from "./sendMessage";
 import { sendResource } from "./sendResource";
+import { startGame } from "./startGame";
 import { toggleReady } from "./toggleReady";
 
 export const addGameHandlers = (socket: AppSocketType) => {
@@ -9,4 +10,5 @@ export const addGameHandlers = (socket: AppSocketType) => {
     socket.on("sendResource", (entity, task) => sendResource(socket, entity, task));
     socket.on("sendMessage", (text) => sendMessage(socket, text));
     socket.on("toggleReady", () => toggleReady(socket));
+    socket.on("startGame", () => startGame(socket));
 }

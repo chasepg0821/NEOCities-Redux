@@ -8,7 +8,7 @@ import {
 import { EntityID, GameDataType, UserID } from "../../util/store/roomTypes";
 import { useSocketContext } from "../../util/socket/SocketProvider";
 import { useDispatch } from "react-redux";
-import { COMPLETED_TASK, NEW_MESSAGE, NEW_TASKS, SCORES, STAGED_GAME, UPDATE_ENTITY_DEST, UPDATE_TASK_RESOURCES } from "../../util/store/slices/gameSlice";
+import { COMPLETED_TASK, NEW_MESSAGE, NEW_TASKS, SCORES, STAGED_GAME, TOGGLE_READY, UPDATE_ENTITY_DEST, UPDATE_TASK_RESOURCES } from "../../util/store/slices/gameSlice";
 import { useNavigate } from "@tanstack/react-router";
 
 interface IGameContext {
@@ -43,6 +43,8 @@ export const GameProvider = ({ room, user, children }: GameContextProps) => {
             .then((data) => {
                 dispatch(STAGED_GAME(data.game));
                 gameData.current = data.game;
+                removeGameHandlers();
+                addGameDataHandlers();
                 socketContext.sendEvent("loadedGameData");
             });
     };
@@ -54,7 +56,7 @@ export const GameProvider = ({ room, user, children }: GameContextProps) => {
         return gameData.current ? getter(gameData.current) : undefined;
     };
 
-    const addGameHandlers = () => {
+    const addGameDataHandlers = () => {
         socketContext.addListener("startedGame", () => {
             nav({ 
                 to: "/rooms/$roomID/game/play", 
@@ -87,7 +89,10 @@ export const GameProvider = ({ room, user, children }: GameContextProps) => {
         socketContext.addListener("newMessage", (message) => {
             if (gameData.current) gameData.current.messages.push(message);
             dispatch(NEW_MESSAGE(message));
-        })
+        });
+        socketContext.addListener("toggleReady", (id) => {
+            dispatch(TOGGLE_READY(id));
+        });
     }
 
     const removeGameHandlers = () => {
@@ -98,10 +103,10 @@ export const GameProvider = ({ room, user, children }: GameContextProps) => {
         socketContext.removeListener("completedTask");
         socketContext.removeListener("scores");
         socketContext.removeListener("newMessage");
+        socketContext.removeListener("toggleReady");
     }
 
     useEffect(() => {
-        addGameHandlers();
         return removeGameHandlers();
     }, []);
 

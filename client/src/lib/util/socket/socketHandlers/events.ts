@@ -15,7 +15,7 @@ export interface ListenEvents {
     stagedGame: (room: string) => void;
 
     // Game
-    startedGame: () => void;
+    startedGame: (id: string) => void;
     loadedGameData: (id: UserID) => void;
     toggleReady: (id: UserID) => void;
     updateEntityDestination: (id: EntityID, destination: EntityDestination) => void;
@@ -37,7 +37,8 @@ export interface EmitEvents {
 
     // Game
     loadedGameData: () => void;
-    toggleReady: (id: UserID) => void;
+    toggleReady: () => void;
+    startGame: () => void;
     sendResource: (entity: EntityID, task: TaskID) => void;
     sendMessage: (text: string) => void;
 }

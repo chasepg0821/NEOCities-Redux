@@ -60,6 +60,13 @@ export class RoomInstance {
         return this.roomData.users;
     }
 
+    public usersLoaded(): boolean {
+        forEach(this.getUsers(), (user, id) => {
+            if (!user.loaded) return false;
+        });
+        return true;
+    }
+
     public isUserLoaded(id: UserID): boolean {
         return this.roomData.users[id].loaded;
     }
@@ -82,7 +89,6 @@ export class RoomInstance {
 
     public assignRole(role: RoleID, user: UserID): void {
         forEach(this.getRoleAssignments(), (u, r) => {
-            console.log(u, r);
             if (parseInt(r) === role) {
                 this.setRoleAssignment(parseInt(r), user);
             } else if (u === user) {

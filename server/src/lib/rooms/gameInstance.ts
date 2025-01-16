@@ -4,6 +4,7 @@ import {
     EntityID,
     EntityType,
     GameDataType,
+    PlayerType,
     PointType,
     RoomSetupType,
     TaskID,
@@ -99,6 +100,17 @@ export class GameInstance {
         gD.tasks = this.getNewTasks(0) || {};
 
         return gD;
+    }
+
+    public getPlayers(): {[id: UserID]: PlayerType} {
+        return this.gameData.players;
+    }
+
+    public playersReady(): boolean {
+        forEach(this.getPlayers(), (player, id) => {
+            if (!player.ready) return false;
+        });
+        return true;
     }
 
     public isPlayer(id: UserID): boolean {
@@ -257,7 +269,8 @@ export class GameInstance {
     public start(): void {
         this.runSecondInterval();
         this.runTickInterval();
-        this.io.in(this.room.getID()).emit("startedGame");
+        console.log(`Started Game | Room: ${this.room.getID()}`)
+        this.io.in(this.room.getID()).emit("startedGame", this.room.getID());
     }
 
     public pause(): void {
@@ -269,6 +282,7 @@ export class GameInstance {
     public end(): void {
         clearInterval(this.secondInterval);
         clearInterval(this.tickInterval);
+        console.log(`Ended Game | Room: ${this.room.getID()}`)
         // TODO: check conditions, save scores, gracefully close game
     }
 }

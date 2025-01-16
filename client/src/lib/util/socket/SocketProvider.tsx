@@ -54,7 +54,7 @@ export const SocketProvider = ({ children } : PropsWithChildren) => {
                 uid: user.id,
                 uname: user.name,
             }
-        })
+        });
 
         newSocket.on("connect", () => {
             if (socket.current?.recovered) {
@@ -83,7 +83,7 @@ export const SocketProvider = ({ children } : PropsWithChildren) => {
       
         addUtilHandlers(newSocket, nav, dispatch);
         addRoomHandlers(newSocket, nav, dispatch);
-        addGenericGameHandlers(newSocket, dispatch);
+        addGenericGameHandlers(newSocket, nav, dispatch);
 
         socket.current = newSocket;
     }

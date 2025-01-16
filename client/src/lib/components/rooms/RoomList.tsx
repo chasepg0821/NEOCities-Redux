@@ -2,32 +2,11 @@ import { useAppSelector } from '@/lib/util/store/hooks';
 import { RoomInfoType } from '@/lib/util/store/roomTypes'
 import { JOINED_ROOM } from '@/lib/util/store/slices/roomSlice';
 import { useNavigate } from '@tanstack/react-router';
-import React from 'react'
 import { useDispatch } from 'react-redux';
 
 import "./RoomList.scss"
 import Card from '../generic/Card/Card';
-import { MdLock, MdLockOpen } from 'react-icons/md';
-
-interface RoomCardProps {
-  room: RoomInfoType,
-  onJoin: () => void;
-}
-
-const RoomCard = ({ room, onJoin }: RoomCardProps): React.ReactNode => {
-  return (
-    <Card
-      key={room.id}
-      icon={room.locked && <MdLock />}
-      title={room.id}
-      actions={[
-        <button className="action" onClick={onJoin}>Join Room</button>
-      ]}
-    >
-      {room.admin.name} | {room.numUsers}
-    </Card>
-  )
-}
+import { MdLock } from 'react-icons/md';
 
 interface RoomListProps {
   rooms: RoomInfoType[],
@@ -71,7 +50,18 @@ const RoomList = ({ rooms }: RoomListProps) => {
 
   return (
     <div className="room-list">
-      {rooms.map((room) => <RoomCard key={room.id} room={room} onJoin={() => handleJoinRoom(room.id)} />)}
+      {rooms.map((room) => (
+        <Card
+          key={room.id}
+          icon={room.locked && <MdLock />}
+          title={room.id}
+          actions={[
+            <button className="action" onClick={() => handleJoinRoom(room.id)} key={`join-button-${room.id}`}>Join Room</button>
+          ]}
+        >
+          {room.admin.name} | {room.numUsers}
+        </Card>
+      ))}
     </div>
   )
 }
