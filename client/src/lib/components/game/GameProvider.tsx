@@ -5,15 +5,24 @@ import {
     useEffect,
     useRef
 } from "react";
-import { EntityID, GameDataType, UserID } from "../../util/store/roomTypes";
+import { GameDataType, UserID } from "../../util/store/roomTypes";
 import { useSocketContext } from "../../util/socket/SocketProvider";
 import { useDispatch } from "react-redux";
-import { COMPLETED_TASK, NEW_MESSAGE, NEW_TASKS, SCORES, STAGED_GAME, TOGGLE_READY, UPDATE_ENTITY_DEST, UPDATE_TASK_RESOURCES } from "../../util/store/slices/gameSlice";
+import {
+    COMPLETED_TASK,
+    NEW_MESSAGE,
+    NEW_TASKS,
+    SCORES,
+    STAGED_GAME,
+    TOGGLE_READY,
+    UPDATE_ENTITY_DEST,
+    UPDATE_TASK_RESOURCES
+} from "../../util/store/slices/gameSlice";
 import { useNavigate } from "@tanstack/react-router";
+import { LOADED_GAME_DATA } from "@/lib/util/store/slices/roomSlice";
 
 interface IGameContext {
     fetchGameData: () => Promise<void>;
-    setGameData: (setter: (gD: GameDataType) => void) => void;
     getGameData: (getter: (gD: GameDataType) => any) => any;
 }
 
@@ -49,34 +58,40 @@ export const GameProvider = ({ room, user, children }: GameContextProps) => {
             });
     };
 
-    const setGameData = (setter: (gD: GameDataType) => void) => {
-        if (gameData.current) setter(gameData.current);
-    };
     const getGameData = (getter: (gD: GameDataType) => any) => {
         return gameData.current ? getter(gameData.current) : undefined;
     };
 
     const addGameDataHandlers = () => {
+        socketContext.addListener("loadedGameData", (id) => {
+            dispatch(LOADED_GAME_DATA(id));
+        });
         socketContext.addListener("startedGame", () => {
-            nav({ 
-                to: "/rooms/$roomID/game/play", 
-                params: { roomID: room } 
+            nav({
+                to: "/rooms/$roomID/game/play",
+                params: { roomID: room }
             });
         });
-        socketContext.addListener("updateEntityDestination", (id, destination) => {
-            if (gameData.current) gameData.current.entities[id].destination = destination;
-            dispatch(UPDATE_ENTITY_DEST({id, destination}));
-        });
-        socketContext.addListener("newTasks", (tasks) => {
-            if (gameData.current) gameData.current.tasks = {
-                ...gameData.current.tasks,
-                ...tasks
+        socketContext.addListener(
+            "updateEntityDestination",
+            (id, destination) => {
+                if (gameData.current)
+                    gameData.current.entities[id].destination = destination;
+                dispatch(UPDATE_ENTITY_DEST({ id, destination }));
             }
+        );
+        socketContext.addListener("newTasks", (tasks) => {
+            if (gameData.current)
+                gameData.current.tasks = {
+                    ...gameData.current.tasks,
+                    ...tasks
+                };
             dispatch(NEW_TASKS(tasks));
         });
         socketContext.addListener("updateTaskResources", (id, resources) => {
-            if (gameData.current) gameData.current.tasks[id].resources = resources;
-            dispatch(UPDATE_TASK_RESOURCES({id, resources}));
+            if (gameData.current)
+                gameData.current.tasks[id].resources = resources;
+            dispatch(UPDATE_TASK_RESOURCES({ id, resources }));
         });
         socketContext.addListener("completedTask", (id) => {
             if (gameData.current) delete gameData.current.tasks[id];
@@ -93,9 +108,10 @@ export const GameProvider = ({ room, user, children }: GameContextProps) => {
         socketContext.addListener("toggleReady", (id) => {
             dispatch(TOGGLE_READY(id));
         });
-    }
+    };
 
     const removeGameHandlers = () => {
+        socketContext.removeListener("loadedGameData");
         socketContext.removeListener("startedGame");
         socketContext.removeListener("updateEntityDestination");
         socketContext.removeListener("newTasks");
@@ -104,7 +120,7 @@ export const GameProvider = ({ room, user, children }: GameContextProps) => {
         socketContext.removeListener("scores");
         socketContext.removeListener("newMessage");
         socketContext.removeListener("toggleReady");
-    }
+    };
 
     useEffect(() => {
         return removeGameHandlers();
@@ -114,7 +130,6 @@ export const GameProvider = ({ room, user, children }: GameContextProps) => {
         <GameContext.Provider
             value={{
                 fetchGameData,
-                setGameData,
                 getGameData
             }}>
             {children}

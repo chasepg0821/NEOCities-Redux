@@ -11,7 +11,6 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
 import { Route as RoomsIndexImport } from './routes/rooms/index'
 import { Route as RoomsMakeImport } from './routes/rooms/make'
@@ -22,12 +21,6 @@ import { Route as RoomsRoomIDGameIndexImport } from './routes/rooms/$roomID/game
 import { Route as RoomsRoomIDGamePlayImport } from './routes/rooms/$roomID/game/play'
 
 // Create/Update Routes
-
-const AboutRoute = AboutImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
@@ -86,13 +79,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
     '/rooms/$roomID': {
@@ -179,7 +165,6 @@ const RoomsRoomIDRouteWithChildren = RoomsRoomIDRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/rooms/$roomID': typeof RoomsRoomIDRouteWithChildren
   '/rooms/make': typeof RoomsMakeRoute
   '/rooms': typeof RoomsIndexRoute
@@ -191,7 +176,6 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/rooms/make': typeof RoomsMakeRoute
   '/rooms': typeof RoomsIndexRoute
   '/rooms/$roomID': typeof RoomsRoomIDIndexRoute
@@ -202,7 +186,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/rooms/$roomID': typeof RoomsRoomIDRouteWithChildren
   '/rooms/make': typeof RoomsMakeRoute
   '/rooms/': typeof RoomsIndexRoute
@@ -216,7 +199,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
     | '/rooms/$roomID'
     | '/rooms/make'
     | '/rooms'
@@ -227,7 +209,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/about'
     | '/rooms/make'
     | '/rooms'
     | '/rooms/$roomID'
@@ -236,7 +217,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/about'
     | '/rooms/$roomID'
     | '/rooms/make'
     | '/rooms/'
@@ -249,7 +229,6 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
   RoomsRoomIDRoute: typeof RoomsRoomIDRouteWithChildren
   RoomsMakeRoute: typeof RoomsMakeRoute
   RoomsIndexRoute: typeof RoomsIndexRoute
@@ -257,7 +236,6 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
   RoomsRoomIDRoute: RoomsRoomIDRouteWithChildren,
   RoomsMakeRoute: RoomsMakeRoute,
   RoomsIndexRoute: RoomsIndexRoute,
@@ -274,7 +252,6 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/about",
         "/rooms/$roomID",
         "/rooms/make",
         "/rooms/"
@@ -282,9 +259,6 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
-    },
-    "/about": {
-      "filePath": "about.tsx"
     },
     "/rooms/$roomID": {
       "filePath": "rooms/$roomID.tsx",

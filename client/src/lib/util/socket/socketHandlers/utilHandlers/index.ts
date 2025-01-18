@@ -17,8 +17,8 @@ export const addUtilHandlers = (socket: ClientSocketType, nav: UseNavigateResult
     });
 }
 
-export const removeUtilHandlers = (socket: ClientSocketType) => {
-    socket.off("ping");
-    socket.off("permError");
-    socket.off("reqError");
+export const removeUtilHandlers = (socket?: ClientSocketType) => {
+    socket?.off("ping");
+    socket?.off("permError");
+    socket?.off("reqError");
 }
