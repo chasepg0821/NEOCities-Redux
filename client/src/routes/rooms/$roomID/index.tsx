@@ -10,7 +10,7 @@ import { useAppSelector } from "@/lib/util/store/hooks";
 import UserList from "@/lib/components/lobby/UserList/UserList";
 
 export const Route = createFileRoute("/rooms/$roomID/")({
-    component: RouteComponent
+    component: RouteComponent,
 });
 
 function RouteComponent() {

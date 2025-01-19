@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useAppDispatch, useAppSelector } from "../../lib/util/store/hooks";
+import { useAppDispatch } from "../../lib/util/store/hooks";
 import { JOINED_ROOM } from "../../lib/util/store/slices/roomSlice";
 import { MVPRoom } from "../../lib/assets/MVPConstants/defaultRoom";
 import Container from "@/lib/components/generic/Container/Container";

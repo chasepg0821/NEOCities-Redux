@@ -16,7 +16,7 @@ import {
     removeRoomHandlers,
     removeUtilHandlers
 } from "./socketHandlers";
-import { useNavigate, useRouteContext } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { LEFT_ROOM } from "../store/slices/roomSlice";
 
 export interface ISocketContext {
@@ -35,9 +35,15 @@ const SocketContext = createContext<ISocketContext>(undefined!);
 
 export const useSocketContext = () => useContext(SocketContext);
 
-export const SocketProvider = ({ children }: PropsWithChildren) => {
+interface SocketProviderProps extends PropsWithChildren {
+    user: {
+        id: string,
+        name: string
+    }
+}
+
+export const SocketProvider = ({ user, children }: SocketProviderProps) => {
     const socket = useRef<ClientSocketType>();
-    const user = useRouteContext({ from: "/rooms/$roomID" }).user;
     const nav = useNavigate();
     const dispatch = useAppDispatch();
 
