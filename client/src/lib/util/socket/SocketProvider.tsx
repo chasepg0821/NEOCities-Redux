@@ -16,7 +16,7 @@ import {
     removeRoomHandlers,
     removeUtilHandlers
 } from "./socketHandlers";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useRouteContext } from "@tanstack/react-router";
 import { LEFT_ROOM } from "../store/slices/roomSlice";
 
 export interface ISocketContext {
@@ -37,8 +37,7 @@ export const useSocketContext = () => useContext(SocketContext);
 
 export const SocketProvider = ({ children }: PropsWithChildren) => {
     const socket = useRef<ClientSocketType>();
-
-    const user = useAppSelector((state) => state.auth); //this should never change when mounted, but if it does, it will trigger a rerender and remove from socket anyway (no crazy rerenders due to state on context)
+    const user = useRouteContext({ from: "/rooms/$roomID" }).user;
     const nav = useNavigate();
     const dispatch = useAppDispatch();
 

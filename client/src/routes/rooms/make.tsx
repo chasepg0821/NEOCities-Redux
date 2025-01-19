@@ -12,7 +12,7 @@ export const Route = createFileRoute("/rooms/make")({
 });
 
 function RouteComponent() {
-    const user = useAppSelector((store) => store.auth);
+    const context = Route.useRouteContext();
     const dispatch = useAppDispatch();
     const nav = useNavigate();
 
@@ -23,7 +23,7 @@ function RouteComponent() {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                user,
+                user: context.user,
                 roomSetup: MVPRoom
             })
         })

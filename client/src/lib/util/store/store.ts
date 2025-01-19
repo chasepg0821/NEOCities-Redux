@@ -22,7 +22,7 @@ const persistConfig = {
 };
 
 const rootReducer = combineReducers({
-    auth: AuthReducer,
+    // auth: AuthReducer,
 	room: RoomReducer,
 	game: GameReducer,
 });

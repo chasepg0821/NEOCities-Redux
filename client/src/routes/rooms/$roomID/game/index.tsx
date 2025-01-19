@@ -20,7 +20,7 @@ function RouteComponent() {
     const GameContext = useGameContext();
     const [loading, setLoading] = useState(true);
     const admin = useAppSelector((state) => state.room.admin.id);
-    const user = useAppSelector((state) => state.auth.id);
+    const user = Route.useRouteContext().user.id;
     const users = useAppSelector((state) => state.room.users);
     const players = useAppSelector((state) => state.game.players);
     const socket = useSocketContext();

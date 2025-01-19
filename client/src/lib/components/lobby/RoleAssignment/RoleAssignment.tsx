@@ -7,12 +7,13 @@ import { RoleID } from "@/lib/util/store/roomTypes";
 import { useSocketContext } from "@/lib/util/socket/SocketProvider";
 import Card from "../../generic/Card/Card";
 import { MdAssignmentInd } from "react-icons/md";
+import { useRouteContext } from "@tanstack/react-router";
 
 type Props = {};
 
 const RoleAssignment = (props: Props) => {
+    const userID = useRouteContext({ from: "/rooms/$roomID/"}).user.id;
     const admin = useAppSelector((state) => state.room.admin.id);
-    const user = useAppSelector((state) => state.auth.id);
     const roleAssignments = useAppSelector((state) => state.room.roleAssignments);
     const roles = useAppSelector((state) => state.room.roles);
     const users = useAppSelector((state) => state.room.users);
@@ -45,7 +46,7 @@ const RoleAssignment = (props: Props) => {
                                 name={rid}
                                 id={rid}
                                 value={assigned}
-                                disabled={user !== admin}
+                                disabled={userID !== admin}
                                 onChange={(e) =>
                                     handleAssignRole(e, parseInt(rid))
                                 }>

@@ -2,13 +2,14 @@ import Logo from "@/lib/assets/images/Logo";
 import { useAppSelector } from "../../../util/store/hooks";
 
 import "./Navbar.scss";
-import { useNavigate } from "@tanstack/react-router";
+import { useMatches, useNavigate, useRouteContext } from "@tanstack/react-router";
 import { MdConstruction, MdSearch } from "react-icons/md";
 
 type Props = {};
 
 const Navbar = (props: Props) => {
-    const name = useAppSelector((state) => state.auth.name);
+    const matches = useMatches();
+    const name = matches[matches.length -1].context.user.name;
     const room = useAppSelector((state) => state.room.id);
     const nav = useNavigate();
 

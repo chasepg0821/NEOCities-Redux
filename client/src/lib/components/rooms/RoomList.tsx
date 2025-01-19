@@ -1,7 +1,7 @@
 import { useAppSelector } from '@/lib/util/store/hooks';
 import { RoomInfoType } from '@/lib/util/store/roomTypes'
 import { JOINED_ROOM } from '@/lib/util/store/slices/roomSlice';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useRouteContext } from '@tanstack/react-router';
 import { useDispatch } from 'react-redux';
 
 import "./RoomList.scss"
@@ -15,7 +15,7 @@ interface RoomListProps {
 const RoomList = ({ rooms }: RoomListProps) => {
   const dispatch = useDispatch();
   const nav = useNavigate();
-  const user = useAppSelector((state) => state.auth);
+  const context= useRouteContext({ from: "/rooms/" });
 
   const handleJoinRoom = (room: string) => {
     fetch(`http://localhost:3000/api/rooms/join`, {
@@ -24,7 +24,7 @@ const RoomList = ({ rooms }: RoomListProps) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        user,
+        user: context.user,
         room,
       }),
     })

@@ -14,7 +14,7 @@ export const Route = createFileRoute("/rooms/$roomID/")({
 });
 
 function RouteComponent() {
-    const user = useAppSelector((state) => state.auth.id);
+    const user = Route.useRouteContext().user.id;
     const admin = useAppSelector((state) => state.room.admin.id);
     const nav = useNavigate();
     const socket = useSocketContext();

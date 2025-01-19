@@ -6,10 +6,11 @@ import "./PlayerStage.scss";
 import Card from "../../../generic/Card/Card";
 import { useSocketContext } from "@/lib/util/socket/SocketProvider";
 import { FaChess } from "react-icons/fa";
+import { useRouteContext } from "@tanstack/react-router";
 
 
 const PlayerStage = () => {
-    const user = useAppSelector((state) => state.auth.id);
+    const context = useRouteContext({ from: '/rooms/$roomID/game/' });
     const users = useAppSelector((state) => state.room.users);
     const players = useAppSelector((state) => state.game.players);
     const socket = useSocketContext();
@@ -22,7 +23,7 @@ const PlayerStage = () => {
         <Card
             title="Players"
             icon={<FaChess />}
-            actions={players[user] && users[user]?.loaded ? [
+            actions={players[context.user.id] && users[context.user.id]?.loaded ? [
                 <button className="action" onClick={toggleReady} key={"toggle-ready"}>Toggle Ready</button>
             ] : undefined}
         >
