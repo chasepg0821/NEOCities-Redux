@@ -6,7 +6,7 @@ import {
     useRef
 } from "react";
 import { io } from "socket.io-client";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { useAppDispatch } from "../store/hooks";
 import {
     addRoomHandlers,
     addUtilHandlers,
@@ -20,6 +20,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { LEFT_ROOM } from "../store/slices/roomSlice";
 
 export interface ISocketContext {
+    getSocket: () => ClientSocketType | undefined;
     addListener: <Ev extends keyof ListenEvents>(
         event: Ev,
         cb: ListenEvents[Ev]
@@ -75,6 +76,9 @@ export const SocketProvider = ({ user, children }: SocketProviderProps) => {
             if (socket.current?.active) {
                 console.log("Temporary connection failure. Reconnecting...");
             } else {
+                nav({
+                    to: "/rooms"
+                })
                 dispatch(LEFT_ROOM());
                 console.log("Closed socket connection.");
             }
@@ -90,6 +94,10 @@ export const SocketProvider = ({ user, children }: SocketProviderProps) => {
     ) => {
         socket.current?.emit(event, ...args);
     };
+
+    const getSocket = (): ClientSocketType | undefined => {
+        return socket.current;
+    }
 
     const addListener = <Ev extends keyof ListenEvents>(
         event: Ev,
@@ -119,6 +127,7 @@ export const SocketProvider = ({ user, children }: SocketProviderProps) => {
     return (
         <SocketContext.Provider
             value={{
+                getSocket,
                 addListener,
                 removeListener,
                 sendEvent

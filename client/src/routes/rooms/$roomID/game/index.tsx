@@ -11,14 +11,26 @@ import { MdPlayArrow } from "react-icons/md";
 import PlayerStage from "@/lib/components/game/stage/PlayerStage/PlayerStage";
 
 export const Route = createFileRoute("/rooms/$roomID/game/")({
-    component: RouteComponent
+    component: RouteComponent,
+    beforeLoad: async ({context, params}) => {
+        return fetch(`http://localhost:3000/api/rooms/${params.roomID}/game?uid=${context.user.id}`)
+                    .then((res) => {
+                        if (!res.ok) {
+                            throw Error("Response was not ok!");
+                        }
+                        return res.json();
+                    })
+                    .then((data) => data);
+    },
+    loader: ({context}) => context.game,
+    pendingComponent: () => <div>Loading...</div>
 });
 
 function RouteComponent() {
     const { roomID } = Route.useParams();
+    const game = Route.useLoaderData();
     const nav = useNavigate();
     const GameContext = useGameContext();
-    const [loading, setLoading] = useState(true);
     const admin = useAppSelector((state) => state.room.admin.id);
     const user = Route.useRouteContext().user.id;
     const users = useAppSelector((state) => state.room.users);
@@ -26,10 +38,8 @@ function RouteComponent() {
     const socket = useSocketContext();
 
     useEffect(() => {
-        GameContext.fetchGameData()
-            .then(() => setLoading(false))
-            .catch((e) => console.log(e));
-    }, []);
+        GameContext.setGameData(game);
+    }, [game]);
 
     const usersLoaded = useMemo(() => {
         let allLoaded = true;

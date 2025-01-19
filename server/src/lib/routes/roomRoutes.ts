@@ -53,8 +53,10 @@ RoomRouter.post("/make", (req: Request, res: Response) => {
 });
 
 RoomRouter.post("/join", (req: Request, res: Response) => {
-    const room = getRooms().getRoom(req.body.room);
+    const rooms = getRooms();
+    const room = rooms.getRoom(req.body.room);
     const clients = getClients();
+    const client = clients.getClient(req.body.user.id);
 
     // check if the room exists
     if (!room)
@@ -63,19 +65,25 @@ RoomRouter.post("/join", (req: Request, res: Response) => {
             message: "Requested room does not exist."
         });
 
-    // add the client and put them into the room
-    clients.add(req.body.user.id, {
-        name: req.body.user.name,
-        room: req.body.room,
-        latency: 0
-    });
+    // if the client doesn't exist make the session and put them in the room
+    if (!client) {
+        clients.add(req.body.user.id, {
+            name: req.body.user.name,
+            room: req.body.room,
+            latency: 0
+        });
+    // if the client is in another room, remove them and move them
+    } else if (client.room !== req.body.room) {
+        rooms.getRoom(client.room)?.removeUser(req.body.user.id);
+        client.room = req.body.room;
+    }
+
     room!.addUser(req.body.user.id, {
         name: req.body.user.name,
-        latency: 0,
-        loaded: false
+        loaded: false,
+        latency: client ? client.latency : 0
     });
 
-    console.log(`${req.body.user.id} joined room ${req.body.room}.`);
     res.status(200).send({ room: room!.getLobbyData() });
 });
 

@@ -13,8 +13,8 @@ import {
     NEW_MESSAGE,
     NEW_TASKS,
     SCORES,
+    SET_READY,
     STAGED_GAME,
-    TOGGLE_READY,
     UPDATE_ENTITY_DEST,
     UPDATE_TASK_RESOURCES
 } from "../../util/store/slices/gameSlice";
@@ -22,8 +22,11 @@ import { useNavigate } from "@tanstack/react-router";
 import { LOADED_GAME_DATA } from "@/lib/util/store/slices/roomSlice";
 
 interface IGameContext {
-    fetchGameData: () => Promise<void>;
-    getGameData: (getter: (gD: GameDataType) => any) => any;
+    setGameData: (gD: GameDataType) => void;
+    getGameData: () => GameDataType | undefined;
+    addHandlers: () => void;
+    removeHandlers: () => void;
+    // getGameData: (getter: (gD: GameDataType) => any) => any;
 }
 
 const GameContext = createContext<IGameContext>(undefined!);
@@ -35,44 +38,38 @@ interface GameContextProps extends PropsWithChildren {
     user: UserID;
 }
 
-export const GameProvider = ({ room, user, children }: GameContextProps) => {
+export const GameProvider = ({ room, children }: GameContextProps) => {
     const gameData = useRef<GameDataType>();
     const socketContext = useSocketContext();
     const dispatch = useDispatch();
     const nav = useNavigate();
 
-    const fetchGameData = async () => {
-        return fetch(`http://localhost:3000/api/rooms/${room}/game?uid=${user}`)
-            .then((res) => {
-                if (!res.ok) {
-                    throw Error("Response was not ok!");
-                }
-                return res.json();
-            })
-            .then((data) => {
-                dispatch(STAGED_GAME(data.game));
-                gameData.current = data.game;
-                removeGameHandlers();
-                addGameDataHandlers();
-                socketContext.sendEvent("loadedGameData");
-            });
-    };
+    const setGameData = (gD: GameDataType) => {
+        if (gD) {
+            gameData.current = gD;
+            dispatch(STAGED_GAME(gD));
+            removeHandlers();
+            addHandlers();
+            socketContext.sendEvent("loadedGameData");
+        }
+    }
 
-    const getGameData = (getter: (gD: GameDataType) => any) => {
-        return gameData.current ? getter(gameData.current) : undefined;
-    };
+    const getGameData = (): GameDataType | undefined => {
+        return gameData.current;
+    }
 
-    const addGameDataHandlers = () => {
-        socketContext.addListener("loadedGameData", (id) => {
+    const addHandlers = () => {
+        console.log(socketContext.getSocket() ? true : false);
+        socketContext.getSocket()?.on("loadedGameData", (id) => {
             dispatch(LOADED_GAME_DATA(id));
         });
-        socketContext.addListener("startedGame", () => {
+        socketContext.getSocket()?.on("startedGame", () => {
             nav({
                 to: "/rooms/$roomID/game/play",
                 params: { roomID: room }
             });
         });
-        socketContext.addListener(
+        socketContext.getSocket()?.on(
             "updateEntityDestination",
             (id, destination) => {
                 if (gameData.current)
@@ -80,7 +77,7 @@ export const GameProvider = ({ room, user, children }: GameContextProps) => {
                 dispatch(UPDATE_ENTITY_DEST({ id, destination }));
             }
         );
-        socketContext.addListener("newTasks", (tasks) => {
+        socketContext.getSocket()?.on("newTasks", (tasks) => {
             if (gameData.current)
                 gameData.current.tasks = {
                     ...gameData.current.tasks,
@@ -88,29 +85,32 @@ export const GameProvider = ({ room, user, children }: GameContextProps) => {
                 };
             dispatch(NEW_TASKS(tasks));
         });
-        socketContext.addListener("updateTaskResources", (id, resources) => {
+        socketContext.getSocket()?.on("updateTaskResources", (id, resources) => {
             if (gameData.current)
                 gameData.current.tasks[id].resources = resources;
             dispatch(UPDATE_TASK_RESOURCES({ id, resources }));
         });
-        socketContext.addListener("completedTask", (id) => {
+        socketContext.getSocket()?.on("completedTask", (id) => {
             if (gameData.current) delete gameData.current.tasks[id];
             dispatch(COMPLETED_TASK(id));
         });
-        socketContext.addListener("scores", (scores) => {
+        socketContext.getSocket()?.on("scores", (scores) => {
             if (gameData.current) gameData.current.scores = scores;
             dispatch(SCORES(scores));
         });
-        socketContext.addListener("newMessage", (message) => {
+        socketContext.getSocket()?.on("newMessage", (message) => {
             if (gameData.current) gameData.current.messages.push(message);
             dispatch(NEW_MESSAGE(message));
         });
-        socketContext.addListener("toggleReady", (id) => {
-            dispatch(TOGGLE_READY(id));
+        socketContext.getSocket()?.on("setReady", (id, ready) => {
+            dispatch(SET_READY({
+                id,
+                ready
+            }));
         });
     };
 
-    const removeGameHandlers = () => {
+    const removeHandlers = () => {
         socketContext.removeListener("loadedGameData");
         socketContext.removeListener("startedGame");
         socketContext.removeListener("updateEntityDestination");
@@ -119,18 +119,21 @@ export const GameProvider = ({ room, user, children }: GameContextProps) => {
         socketContext.removeListener("completedTask");
         socketContext.removeListener("scores");
         socketContext.removeListener("newMessage");
-        socketContext.removeListener("toggleReady");
+        socketContext.removeListener("setReady");
     };
 
     useEffect(() => {
-        return removeGameHandlers();
+        addHandlers();
+        return () => removeHandlers();
     }, []);
 
     return (
         <GameContext.Provider
             value={{
-                fetchGameData,
-                getGameData
+                setGameData,
+                getGameData,
+                addHandlers,
+                removeHandlers
             }}>
             {children}
         </GameContext.Provider>

@@ -17,7 +17,7 @@ export interface ListenEvents {
     // Game
     startedGame: (id: string) => void;
     loadedGameData: (id: UserID) => void;
-    toggleReady: (id: UserID) => void;
+    setReady: (id: UserID, ready: boolean) => void;
     updateEntityDestination: (id: EntityID, destination: EntityDestination) => void;
     newTasks: (tasks: { [id: TaskID]: TaskType }) =>  void;
     updateTaskResources: (id: TaskID, resources: ResourceID[][]) =>  void;

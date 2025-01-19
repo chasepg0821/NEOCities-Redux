@@ -118,8 +118,9 @@ export class GameInstance {
     }
 
     public toggleReady(id: UserID): void {
-        this.gameData.players[id].ready = !this.gameData.players[id].ready;
-        this.io.in(this.room.getID()).emit("toggleReady", id);
+        const ready = !this.gameData.players[id].ready;
+        this.gameData.players[id].ready = ready;
+        this.io.in(this.room.getID()).emit("setReady", id, ready);
     }
 
     public sendMessage(user: UserID, text: string): void {
